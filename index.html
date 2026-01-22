@@ -4,92 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>✈️2026越南7天6夜✈️</title>
-    <!-- 引入 Tailwind CSS 進行樣式設定 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 基礎設定 */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f3f4f6;
             color: #333;
-            overscroll-behavior-y: none; /* 防止手機下拉重整 */
+            overscroll-behavior-y: none;
         }
-        
-        /* 隱藏捲軸但保留功能 */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* 安全區域設定 (避開瀏海與底部橫條) */
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
         .pt-safe-top { padding-top: max(env(safe-area-inset-top), 1rem); }
-
-        /* 動畫效果 */
         .tab-content { display: none; opacity: 0; transition: opacity 0.2s ease-in-out; }
         .tab-content.active { display: block; opacity: 1; }
         
-        /* 文字展開收合 */
+        /* 文字展開收合樣式 */
         .desc-text {
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            white-space: pre-wrap; /* 保留換行 */
+            white-space: pre-wrap;
+            transition: all 0.3s ease;
         }
         .desc-text.expanded {
             -webkit-line-clamp: unset;
+        }
+        
+        /* 時間軸線條 */
+        .timeline-line {
+            position: absolute;
+            left: 27px;
+            top: 3.5rem;
+            bottom: -1rem;
+            width: 2px;
+            background-color: #e5e7eb;
+            z-index: 0;
         }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden max-w-md mx-auto bg-gray-50 shadow-2xl relative">
 
-    <!-- 頂部標題列 -->
+    <!-- Header -->
     <header class="bg-teal-700 text-white px-5 pt-safe-top pb-4 shadow-md z-20 shrink-0">
         <div class="flex justify-between items-center pt-2">
             <div>
                 <h1 class="text-xl font-bold tracking-tight">2026 峴港 7天6夜</h1>
                 <p class="text-teal-100 text-sm opacity-90 mt-1">1/29 (四) - 2/4 (三)</p>
             </div>
-            <!-- 雲端憑證按鈕 -->
             <a href="https://drive.google.com/drive/folders/1Bq2wuzbQWBVWhPaaxSokI7O7cNZOchXd" target="_blank" class="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
             </a>
         </div>
     </header>
 
-    <!-- 主要內容區 (可捲動) -->
+    <!-- Main -->
     <main id="app-container" class="flex-1 overflow-y-auto relative bg-gray-50 pb-24">
-        <!-- 預設顯示載入中 -->
         <div id="loading-msg" class="p-10 text-center text-gray-500">
-            資料載入中...<br>
-            <span class="text-xs">(如果長時間停留在此，請檢查網路或截圖回報)</span>
+            資料載入中...
         </div>
         
         <!-- 行程 Tab -->
         <div id="view-itinerary" class="tab-content active">
-            <!-- 日期選擇器 (Sticky) -->
             <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-200 py-3 shadow-sm">
-                <div id="day-selector" class="flex px-4 gap-3 overflow-x-auto hide-scrollbar">
-                    <!-- JS 生成日期按鈕 -->
-                </div>
+                <div id="day-selector" class="flex px-4 gap-3 overflow-x-auto hide-scrollbar"></div>
             </div>
-            <!-- 行程列表容器 -->
-            <div id="itinerary-list" class="p-4 space-y-4">
-                <!-- JS 生成行程卡片 -->
-            </div>
+            <div id="itinerary-list" class="p-4 space-y-4"></div>
         </div>
 
         <!-- 班機 Tab -->
-        <div id="view-flights" class="tab-content p-5 space-y-4">
-            <!-- JS 生成班機資訊 -->
-        </div>
+        <div id="view-flights" class="tab-content p-5 space-y-4"></div>
 
         <!-- 住宿 Tab -->
-        <div id="view-hotels" class="tab-content p-5 space-y-4">
-            <!-- JS 生成住宿資訊 -->
-        </div>
+        <div id="view-hotels" class="tab-content p-5 space-y-4"></div>
     </main>
 
-    <!-- 底部導航列 -->
+    <!-- Footer Nav -->
     <nav class="bg-white border-t border-gray-200 shrink-0 pb-safe z-30 fixed bottom-0 w-full max-w-md">
         <div class="flex justify-around items-center h-16">
             <button onclick="switchTab('itinerary')" id="btn-itinerary" class="nav-btn flex flex-col items-center justify-center w-full h-full text-teal-600">
@@ -107,13 +98,10 @@
         </div>
     </nav>
 
-    <!-- 腳本區：資料與邏輯 -->
     <script>
-        // --- 1. 資料區 (Data) ---
-        // 使用純變數，避免特殊字元干擾
         const DATA = {
             flights: [
-                { type: "去程", date: "1/29 (四)", airline: "台灣虎航 IT 551", time: "17:25 - 19:10", from: "桃園機場 (T1)", to: "峴港機場", note: "起飛前 48h-60m 需網路報到" },
+                { type: "去程", date: "1/29 (四)", airline: "台灣虎航 IT 551", time: "17:25 - 19:10", from: "桃園機場 (T1)", to: "峴港機場", note: "有供餐。\n起飛前 48h-60m 需網路報到" },
                 { type: "回程", date: "2/4 (三)", airline: "華航 CI 788", time: "10:20 - 14:05", from: "峴港機場 (T2)", to: "桃園機場 (T1)", note: "機型 Airbus A321neo" }
             ],
             hotels: [
@@ -129,91 +117,100 @@
                 { day: 6, date: "2/3 (二)", title: "美山聖地 & 古城" },
                 { day: 7, date: "2/4 (三)", title: "返程" }
             ],
-            // 為避免結構複雜，將行程攤平，透過 dayId 關聯
+            // charter: 標記該項目是否在包車範圍內
             activities: [
                 // Day 1
-                { dayId: 1, time: "17:25", title: "飛機航行", desc: "台灣虎航 IT551 (桃園T1 -> 峴港)", type: "flight" },
-                { dayId: 1, time: "19:10", title: "入境領行李", desc: "峴港機場入境。", type: "activity", map: "Da Nang Airport" },
-                { dayId: 1, time: "19:40", title: "前往市區", desc: "前往換匯與飯店。", type: "transport", tag: "🚗 預約接送 (16人座)" },
-                { dayId: 1, time: "20:00", title: "換匯", desc: "建議：機場匯率若差可少量換，或趕去市區銀樓 (部分20:00關)。", type: "activity", map: "Han Market Gold Shop" },
-                { dayId: 1, time: "20:30", title: "Check-in", desc: "Cozy Danang Boutique Hotel", type: "hotel", map: "Cozy Danang Boutique Hotel" },
-                { dayId: 1, time: "21:00", title: "晚餐：功夫麵", desc: "Kungfu Noodle Restaurant。\n網友推薦：牛肉麵、廣南麵。", type: "food", map: "Kungfu Noodle Restaurant" },
+                { dayId: 1, time: "17:25", title: "✈️ 飛機航行", desc: "台灣虎航 IT551 (桃園T1 -> 峴港)\n機上有供餐。", type: "flight" },
+                { dayId: 1, time: "19:10", title: "🛬 入境領行李", desc: "峴港機場入境大廳。", type: "activity", map: "Da Nang Airport" },
+                { dayId: 1, time: "19:40", title: "🚗 前往市區", desc: "預約接送 (16人座車) 前往市區。", type: "transport", tag: "接送" },
+                { dayId: 1, time: "20:00", title: "💰 機場換匯", desc: "先在機場換少量越南盾。\n⚠️ 注意：機場匯率可能較差，且櫃檯多在 20:00 左右關閉，若來不及請改至市區。", type: "activity", important: true },
+                { dayId: 1, time: "20:30", title: "🏨 Check-in", desc: "Cozy Danang Boutique Hotel\n放置行李。", type: "hotel", map: "Cozy Danang Boutique Hotel" },
+                { dayId: 1, time: "21:00", title: "🍜 晚餐：功夫麵", desc: "Kungfu Noodle Restaurant (營業至 21:30)。\n網友推薦：牛肉麵、廣南麵 (平價好吃)。", type: "food", map: "Kungfu Noodle Restaurant" },
+                { dayId: 1, time: "22:00", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel。", type: "hotel" },
                 
                 // Day 2
-                { dayId: 2, time: "07:00", title: "早餐", desc: "飯店早餐 (06:30-10:00) 或路邊簡餐。", type: "food" },
-                { dayId: 2, time: "07:30", title: "前往巴拿山", desc: "⚠️ 重要：巴拿山氣溫低 5-10 度且多變，務必帶外套和雨具。", type: "transport", tag: "🚌 KKday接送", important: true },
-                { dayId: 2, time: "08:30", title: "纜車上山 & 景點", desc: "搭乘纜車。\n參觀：佛手橋、愛情花園、黛貝酒窖。", type: "activity", map: "Golden Bridge Da Nang" },
-                { dayId: 2, time: "12:30", title: "午餐", desc: "山上有 Buffet 或小吃攤。", type: "food" },
-                { dayId: 2, time: "14:00", title: "法國村 & Fantasy Park", desc: "遊覽法國村拍照。\nFantasy Park：過山車 (約 124 TWD)。", type: "activity" },
-                { dayId: 2, time: "16:30", title: "下山 & 返回市區", desc: "搭纜車下山，接送返回峴港市區。", type: "transport", tag: "🚌 KKday接送" },
-                { dayId: 2, time: "19:00", title: "晚餐：韓江畔/海鮮", desc: "韓江邊餐廳用餐(景觀或海鮮)，餐後步行至龍橋。", type: "food" },
-                { dayId: 2, time: "20:30", title: "龍橋噴火秀", desc: "⚠️ 噴火時間約 15 分鐘。\n記得站在「逆風處」避免被水噴濕。", type: "activity", important: true, map: "Dragon Bridge Da Nang" },
+                { dayId: 2, time: "07:00", title: "🥣 早餐：飯店", desc: "飯店早餐 (供應時間 06:30-10:00)。", type: "food" },
+                { dayId: 2, time: "07:30", title: "🚌 前往巴拿山", desc: "KKday 接送 (請在飯店大廳等候)。\n⚠️ 重要：山上氣溫低 5-10 度，務必帶外套和雨具。", type: "transport", tag: "KKday", important: true },
+                { dayId: 2, time: "08:30", title: "🚠 纜車 & 黃金佛手橋", desc: "搭乘纜車上山。\n參觀：佛手橋、愛情花園、黛貝酒窖。", type: "activity", map: "Golden Bridge Da Nang" },
+                { dayId: 2, time: "12:30", title: "🍔 午餐：山上小吃", desc: "建議在山上攤販或 Buffet 解決。\n(連結為地圖位置)", type: "food", map: "Ba Na Hills Sun World" },
+                { dayId: 2, time: "14:00", title: "🏰 法國村 & 樂園", desc: "遊覽法國村拍照。\nFantasy Park：室內遊樂園，過山車 (約 124 TWD)。", type: "activity" },
+                { dayId: 2, time: "16:30", title: "🚌 下山 & 返回市區", desc: "搭纜車下山，搭乘接送車返回峴港市區。", type: "transport", tag: "KKday" },
+                { dayId: 2, time: "18:30", title: "💰 補換匯", desc: "前往漢市場周邊銀樓補換越南盾。", type: "activity", map: "Han Market Gold Shop" },
+                { dayId: 2, time: "19:00", title: "🦞 晚餐：韓江畔/海鮮", desc: "建議：韓江邊餐廳用餐 (景觀或海鮮)。\n餐後可步行至龍橋。", type: "food" },
+                { dayId: 2, time: "20:30", title: "🐉 龍橋噴火秀", desc: "⚠️ 噴火時間約 15 分鐘。\n記得站在「逆風處」避免被水噴濕。", type: "activity", important: true, map: "Dragon Bridge Da Nang" },
+                { dayId: 2, time: "21:30", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel。", type: "hotel" },
 
                 // Day 3
-                { dayId: 3, time: "09:00", title: "前往五行山", desc: "前往水山電梯售票口。", type: "transport", tag: "🚕 Grab 七人座" },
-                { dayId: 3, time: "09:30", title: "五行山", desc: "建議：電梯上山，走下山 (約10min)。\n參觀靈應寺、玄空洞。", type: "activity", map: "Marble Mountains" },
-                { dayId: 3, time: "12:00", title: "午餐：Thìa Gỗ", desc: "米其林推薦餐廳 (營業 10:00-22:00)。", type: "food", map: "Thìa Gỗ Da Nang" },
-                { dayId: 3, time: "14:00", title: "漢市場 & 粉紅教堂", desc: "漢市場 (Han Market)：\n1F 伴手禮/乾貨，2F 衣服鞋子。\n周邊金飾店可換匯。", type: "shopping", map: "Han Market" },
-                { dayId: 3, time: "17:00", title: "晚餐：龍蝦吃到飽", desc: "All Seasons Buffet Da Nang。\n⚠️ 已訂位，現場付費 (KKday訂位)。", type: "food", important: true, map: "All Seasons Buffet Da Nang" },
-                { dayId: 3, time: "20:00", title: "美溪沙灘", desc: "世界六大最美沙灘散步、周邊熱石按摩/Bar。", type: "activity", map: "My Khe Beach" },
+                { dayId: 3, time: "08:00", title: "🥣 早餐：飯店", desc: "飯店早餐。", type: "food" },
+                { dayId: 3, time: "09:00", title: "🚗 前往五行山", desc: "叫車前往水山電梯售票口。", type: "transport", tag: "Grab 七人座" },
+                { dayId: 3, time: "09:30", title: "⛰️ 五行山", desc: "建議：電梯上山，走下山 (約10min)。\n參觀靈應寺、玄空洞。", type: "activity", map: "Marble Mountains" },
+                { dayId: 3, time: "12:00", title: "🥢 午餐：Thìa Gỗ", desc: "米其林推薦越南料理 (營業 10:00-22:00)。", type: "food", map: "Thìa Gỗ Da Nang" },
+                { dayId: 3, time: "14:00", title: "🛍️ 漢市場 & 粉紅教堂", desc: "漢市場 (Han Market)：\n1F 伴手禮/乾貨，2F 衣服鞋子。\n周邊金飾店可補換匯。", type: "shopping", map: "Han Market" },
+                { dayId: 3, time: "17:00", title: "🦞 晚餐：All Seasons", desc: "All Seasons Buffet Da Nang。\n⚠️ 已預訂龍蝦吃到飽，現場付費 (KKday訂位)。", type: "food", important: true, map: "All Seasons Buffet Da Nang" },
+                { dayId: 3, time: "20:00", title: "💆‍♀️ 按摩 SPA", desc: "Hương Tràm Spa (可預約)。\n或在美溪沙灘周邊散步。", type: "activity", map: "Hương Tràm Spa Da Nang" },
+                { dayId: 3, time: "22:00", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel。", type: "hotel" },
 
                 // Day 4
-                { dayId: 4, time: "09:00", title: "前往順化", desc: "KLOOK 包車 12小時。\n途經：海雲關隘口、陵姑灣。", type: "transport", tag: "🚗 KLOOK 包車", map: "Hai Van Pass" },
-                { dayId: 4, time: "11:30", title: "午餐：順化料理", desc: "推薦：Madame Thu 或 Quan Hanh。\n必吃：順化牛肉粉、浮萍餅。", type: "food" },
-                { dayId: 4, time: "12:30", title: "順化皇城", desc: "越南縮小版紫禁城，參觀約 2H。", type: "activity", map: "Hue Imperial City" },
-                { dayId: 4, time: "15:00", title: "啟定皇陵", desc: "融合東西方建築風格的皇陵。", type: "activity", map: "Tomb of Khai Dinh" },
-                { dayId: 4, time: "18:00", title: "晚餐：山茶夜市", desc: "烤龍蝦、海鮮盤、越式煎餅。\n⚠️ 若擔心海鮮不新鮮，可純逛街。", type: "food", important: true, map: "Son Tra Night Market" },
+                { dayId: 4, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐，吃飽準備長途車程。", type: "food" },
+                { dayId: 4, time: "09:00", title: "🚗 前往順化 (包車)", desc: "KLOOK 包車 12小時。\n途經：海雲關隘口、陵姑灣 (人生必去50景點)。", type: "transport", tag: "包車12H", charter: true, map: "Hai Van Pass" },
+                { dayId: 4, time: "11:30", title: "🍜 午餐：順化料理", desc: "推薦：Madame Thu 或 Quan Hanh。\n必吃：順化牛肉粉 (Bun Bo Hue)、浮萍餅。", type: "food", charter: true, map: "Madame Thu Restaurant - Hue" },
+                { dayId: 4, time: "12:30", title: "🏯 順化皇城", desc: "越南縮小版紫禁城，參觀約 2H。", type: "activity", charter: true, map: "Hue Imperial City" },
+                { dayId: 4, time: "15:00", title: "🏛️ 啟定皇陵 / 天姥寺", desc: "主行程：啟定皇陵 (融合東西方建築)。\n備案：天姥寺 (Thien Mu Pagoda) 若時間充裕可去。", type: "activity", charter: true, map: "Tomb of Khai Dinh" },
+                { dayId: 4, time: "16:30", title: "🚗 返回峴港", desc: "車程約 2.5 小時，經海雲隧道返回。", type: "transport", charter: true },
+                { dayId: 4, time: "19:00", title: "🍢 晚餐：山茶夜市", desc: "烤龍蝦、海鮮盤、越式煎餅。\n⚠️ 備註：若擔心海鮮不新鮮，可純逛街，吃別的。", type: "food", map: "Son Tra Night Market" },
+                { dayId: 4, time: "21:00", title: "🐉 龍橋噴火 (備案)", desc: "每週五、六、日 21:00 噴火。\n若 Day 2 沒看到，今晚可補看。", type: "activity", important: true },
+                { dayId: 4, time: "22:00", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel (最後一晚)。", type: "hotel" },
 
                 // Day 5
-                { dayId: 5, time: "09:00", title: "前往迦南島", desc: "帶著行李移動。", type: "transport", tag: "🚗 KLOOK 包車 (4H)" },
-                { dayId: 5, time: "10:00", title: "迦南島竹籃船", desc: "體驗傳統桶船旋轉表演。\n⚠️ 船夫小費約 20,000-50,000 VND。", type: "activity", important: true },
-                { dayId: 5, time: "11:00", title: "午餐：海鮮火鍋", desc: "海鮮火鍋、烤蝦、炒空心菜。", type: "food" },
-                { dayId: 5, time: "13:00", title: "Check-in", desc: "Lantana Boutique Hoi An Hotel", type: "hotel", map: "Lantana Boutique Hoi An Hotel" },
-                { dayId: 5, time: "14:00", title: "會安古城漫遊", desc: "日本橋、福建會館。\n下午茶：Mot Hoi An (荷花茶)、Faifo Coffee。", type: "activity", map: "Hoi An Ancient Town" },
-                { dayId: 5, time: "16:30", title: "樂園迎賓秀", desc: "會安印象樂園 16:00 入園換票 (KKday)。", type: "activity" },
-                { dayId: 5, time: "20:00", title: "會安回憶秀", desc: "實景秀 (Main Show)。\n⚠️ 散場建議快速走到大馬路叫 Grab。", type: "activity", important: true },
+                { dayId: 5, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐。\n用餐後整理行李退房。", type: "food" },
+                { dayId: 5, time: "09:00", title: "🚗 前往迦南島", desc: "帶著行李移動，包車前往。", type: "transport", tag: "包車4H", charter: true },
+                { dayId: 5, time: "10:00", title: "🥥 迦南島竹籃船", desc: "體驗傳統桶船旋轉表演 (約1小時)。\n⚠️ 船夫小費約 20,000-50,000 VND。", type: "activity", important: true, charter: true },
+                { dayId: 5, time: "11:30", title: "🍲 午餐：Nhà hàng Bông Dừa", desc: "Bông Dừa Restaurant。\n特色：海鮮火鍋、烤蝦、炒空心菜。", type: "food", charter: true, map: "Nhà hàng Bông Dừa Hoi An" },
+                { dayId: 5, time: "13:00", title: "🏨 前往會安 & Check-in", desc: "包車結束，前往 Lantana Boutique Hoi An Hotel 放行李。", type: "hotel", charter: true, map: "Lantana Boutique Hoi An Hotel" },
+                { dayId: 5, time: "14:00", title: "🏮 會安古城漫遊", desc: "景點：日本橋、福建會館。\n下午茶：Mot Hoi An (荷花茶)、Faifo Coffee (頂樓景)。", type: "activity", map: "Hoi An Ancient Town" },
+                { dayId: 5, time: "16:00", title: "🎡 樂園迎賓秀", desc: "會安印象樂園 16:00 入園換票 (KKday)。\n觀賞迎賓秀 (Mini Shows)。", type: "activity" },
+                { dayId: 5, time: "17:30", title: "🍽️ 晚餐：Nón Lá (斗笠)", desc: "園區內自助餐。", type: "food" },
+                { dayId: 5, time: "20:00", title: "🎭 會安回憶秀", desc: "《會安回憶》實景秀 (Main Show) 20:00-21:00。\n\n詳細流程：\n16:30-17:30 迎賓秀\n17:30-18:45 晚餐\n18:45-19:30 夜景&特色小秀(玉華公主大婚)\n19:30-19:50 詢問工作人員 'VIP Elevator' 進場\n\n⚠️ 散場建議：走出劇場後過橋，走到大馬路叫 Grab。", type: "activity", important: true },
+                { dayId: 5, time: "21:30", title: "🛌 回飯店休息", desc: "Lantana Boutique Hoi An Hotel。", type: "hotel" },
 
                 // Day 6
-                { dayId: 6, time: "09:00", title: "前往美山聖地", desc: "車程約 1 小時。", type: "transport", tag: "🚗 KLOOK 包車 (4H)" },
-                { dayId: 6, time: "10:00", title: "美山聖地", desc: "參觀占婆王國遺址。", type: "activity", map: "My Son Sanctuary" },
-                { dayId: 6, time: "13:00", title: "午餐 & 古城", desc: "返回會安，探索古城、購物。", type: "shopping" },
-                { dayId: 6, time: "17:00", title: "晚餐：Morning Glory", desc: "或 Miss Ly。\n必點會安三寶：白玫瑰、炸雲吞、高樓麵。", type: "food" },
-                { dayId: 6, time: "18:30", title: "放水燈 (秋盆河)", desc: "搭乘舢舨船放水燈。", type: "activity" },
-                { dayId: 6, time: "19:30", title: "會安夜市", desc: "燈籠街、街頭小吃。", type: "shopping", map: "Hoi An Night Market" },
+                { dayId: 6, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐。", type: "food" },
+                { dayId: 6, time: "09:00", title: "🚗 前往美山聖地", desc: "車程約 1 小時。", type: "transport", tag: "包車4H", charter: true },
+                { dayId: 6, time: "10:00", title: "🛕 美山聖地", desc: "參觀占婆王國遺址 (小吳哥窟)。\n有接駁車與舞蹈表演。", type: "activity", map: "My Son Sanctuary", charter: true },
+                { dayId: 6, time: "12:00", title: "🚗 返回會安", desc: "搭車返回會安市區 (約1小時)。", type: "transport", charter: true },
+                { dayId: 6, time: "13:30", title: "🥖 午餐：古城小吃", desc: "推薦：Madam Khan (越式法國麵包) 或 Banh Mi Phuong。", type: "food", map: "Madam Khan - The Banh Mi Queen" },
+                { dayId: 6, time: "15:00", title: "🛍️ 古城購物 & 下午茶", desc: "裁縫店訂製、皮件、燈籠。\n找間咖啡廳休息。", type: "shopping" },
+                { dayId: 6, time: "17:30", title: "🥢 晚餐：Morning Glory", desc: "或 Miss Ly。\n必點會安三寶：白玫瑰、炸雲吞、高樓麵。", type: "food", map: "Morning Glory Original" },
+                { dayId: 6, time: "18:30", title: "🕯️ 放水燈 (秋盆河)", desc: "搭乘舢舨船放水燈，欣賞夜景。", type: "activity" },
+                { dayId: 6, time: "19:30", title: "🏮 會安夜市", desc: "燈籠街拍照、買竹編包。", type: "shopping", map: "Hoi An Night Market" },
+                { dayId: 6, time: "21:00", title: "🛌 回飯店休息", desc: "Lantana Boutique Hoi An Hotel。", type: "hotel" },
 
                 // Day 7
-                { dayId: 7, time: "07:00", title: "前往峴港機場", desc: "從會安出發，預留車程時間。", type: "transport", tag: "🚌 KKday 接送" },
-                { dayId: 7, time: "10:20", title: "飛機返程", desc: "華航 CI788 (峴港 T2 -> 桃園 T1)。", type: "flight" }
+                { dayId: 7, time: "06:30", title: "🥣 早餐：飯店", desc: "飯店簡易早餐 / 辦理退房。", type: "food" },
+                { dayId: 7, time: "07:00", title: "🚌 前往峴港機場", desc: "從會安出發，預留車程時間。\n(KKday 接送)", type: "transport", tag: "KKday" },
+                { dayId: 7, time: "08:00", title: "🛫 機場報到", desc: "辦理登機、最後免稅店採買。", type: "activity" },
+                { dayId: 7, time: "10:20", title: "✈️ 飛機返程", desc: "華航 CI788 (峴港 T2 -> 桃園 T1)。\n14:05 抵達台灣。", type: "flight" }
             ]
         };
 
-        // --- 2. 邏輯區 (Logic) ---
+        // --- Logic ---
         let currentDayId = 1;
 
-        // 初始化
         window.addEventListener('DOMContentLoaded', () => {
             try {
                 renderDaySelector();
                 renderItinerary(currentDayId);
                 renderFlights();
                 renderHotels();
-                
-                // 移除 Loading
                 document.getElementById('loading-msg').style.display = 'none';
             } catch (err) {
-                document.getElementById('loading-msg').innerHTML = `<span class="text-red-500 font-bold">發生錯誤: ${err.message}</span>`;
-                console.error(err);
+                document.getElementById('loading-msg').innerHTML = `<span class="text-red-500">Error: ${err.message}</span>`;
             }
         });
 
-        // 切換 Tab
         function switchTab(tabName) {
-            // 隱藏所有內容
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            // 顯示目標內容
             document.getElementById(`view-${tabName}`).classList.add('active');
-            
-            // 更新按鈕樣式
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-teal-600');
                 btn.classList.add('text-gray-400');
@@ -222,96 +219,87 @@
             document.getElementById(`btn-${tabName}`).classList.add('text-teal-600');
         }
 
-        // 選擇日期
         function selectDay(dayId) {
             currentDayId = dayId;
-            renderDaySelector(); // 更新按鈕樣式
-            renderItinerary(dayId); // 更新列表
-            // 自動捲到頂部
+            renderDaySelector();
+            renderItinerary(dayId);
             document.getElementById('app-container').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 渲染日期選擇器
         function renderDaySelector() {
             const container = document.getElementById('day-selector');
             container.innerHTML = DATA.days.map(d => {
                 const isActive = d.day === currentDayId;
                 const activeClass = isActive ? 'bg-teal-600 text-white shadow-md transform scale-105' : 'bg-white text-gray-500 border border-gray-100';
-                return `
-                    <button onclick="selectDay(${d.day})" class="flex-none flex flex-col items-center justify-center min-w-[3.8rem] py-2 rounded-xl transition-all duration-200 ${activeClass}">
+                return `<button onclick="selectDay(${d.day})" class="flex-none flex flex-col items-center justify-center min-w-[3.8rem] py-2 rounded-xl transition-all duration-200 ${activeClass}">
                         <span class="text-[10px] font-medium opacity-90">Day ${d.day}</span>
                         <span class="text-sm font-bold">${d.date.split('(')[0]}</span>
-                    </button>
-                `;
+                    </button>`;
             }).join('');
         }
 
-        // 渲染行程列表
         function renderItinerary(dayId) {
             const list = document.getElementById('itinerary-list');
             const dayData = DATA.days.find(d => d.day === dayId);
             const items = DATA.activities.filter(a => a.dayId === dayId);
 
-            // 標題
             let html = `
-                <div class="mb-2">
-                    <h2 class="text-xl font-bold text-gray-800">${dayData.title}</h2>
-                    <p class="text-sm text-gray-500">${dayData.date}</p>
+                <div class="mb-4 px-1">
+                    <h2 class="text-2xl font-bold text-gray-800">${dayData.title}</h2>
+                    <p class="text-sm text-gray-500 mt-1 flex items-center gap-1">${dayData.date}</p>
                 </div>
             `;
 
             if (items.length === 0) {
-                html += `<div class="p-4 text-center text-gray-400">本日無特定行程</div>`;
+                html += `<div class="p-8 text-center text-gray-400 bg-white rounded-xl border border-dashed border-gray-300">本日無特定行程</div>`;
             } else {
                 html += items.map((item, index) => {
                     const isLast = index === items.length - 1;
                     const typeColor = getTypeColor(item.type);
                     const typeIcon = getTypeIcon(item.type);
-                    const transportBadge = item.tag ? `
-                        <div class="bg-blue-50 px-3 py-1 border-b border-blue-100 flex items-center gap-1 text-xs font-bold text-blue-700">
-                            ${item.tag}
-                        </div>
-                    ` : '';
+                    const transportBadge = item.tag ? `<div class="bg-blue-50 px-3 py-1.5 border-b border-blue-100 flex items-center gap-1 text-xs font-bold text-blue-700">${item.tag}</div>` : '';
                     
-                    const importantStyle = item.important ? 'border-l-4 border-l-amber-400 bg-amber-50/30' : '';
+                    // Charter highlight
+                    const charterClass = item.charter ? 'border-2 border-l-4 border-blue-200 bg-blue-50/20' : '';
+                    const importantStyle = item.important ? 'border-l-4 border-l-amber-400 bg-amber-50/40' : '';
+                    const finalStyle = item.charter ? charterClass : importantStyle;
+
                     const mapBtn = item.map ? `
-                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}" target="_blank" onclick="event.stopPropagation()" class="p-1.5 bg-gray-100 rounded-full text-gray-500 hover:text-teal-600 hover:bg-teal-50">
+                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}" target="_blank" onclick="event.stopPropagation()" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:text-teal-600 hover:bg-teal-50 transition-colors shadow-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </a>
                     ` : '';
                     
-                    const copyBtn = item.type === 'hotel' ? `
-                        <button onclick="event.stopPropagation(); copyText('${item.desc.split('\\n')[0]}')" class="mt-2 text-xs flex items-center gap-1 text-purple-600 bg-purple-50 px-2 py-1 rounded border border-purple-100">
-                           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> 複製飯店名
-                        </button>
+                    const needToggle = item.desc.length > 30; 
+                    const toggleIndicator = needToggle ? `
+                        <div class="text-xs text-gray-400 mt-2 flex items-center gap-1 opacity-70">
+                            <svg class="w-3 h-3 transition-transform duration-300 toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <span class="toggle-text">展開詳情</span>
+                        </div>
                     ` : '';
 
                     return `
                     <div class="relative pl-4">
-                        ${!isLast ? '<div class="absolute left-[27px] top-8 bottom-[-16px] w-0.5 bg-gray-200"></div>' : ''}
-                        
-                        <div class="relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4 transition-transform active:scale-[0.99] ${importantStyle}">
+                        ${!isLast ? '<div class="timeline-line"></div>' : ''}
+                        <div class="relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-5 transition-all active:scale-[0.99] ${finalStyle}">
                             ${transportBadge}
-                            <div class="p-3 flex gap-3" onclick="toggleDesc(this)">
-                                <!-- 時間與圖示 -->
-                                <div class="flex flex-col items-center gap-1 min-w-[3rem]">
-                                    <span class="text-xs font-bold text-gray-500">${item.time}</span>
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow-sm" style="background-color: ${typeColor}">
+                            <div class="p-4 flex gap-4" onclick="toggleDesc(this)">
+                                <div class="flex flex-col items-center gap-1 min-w-[3.5rem] pt-1">
+                                    <span class="text-sm font-black text-gray-700 tracking-tight">${item.time}</span>
+                                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-md z-10" style="background-color: ${typeColor}">
                                         ${typeIcon}
                                     </div>
                                 </div>
-
-                                <!-- 內容 -->
-                                <div class="flex-1 min-w-0 pt-0.5">
+                                <div class="flex-1 min-w-0 pt-1">
                                     <div class="flex justify-between items-start">
-                                        <h3 class="text-base font-bold text-gray-800 leading-tight">${item.title}</h3>
-                                        <div class="flex gap-2 shrink-0 ml-1">
-                                            ${item.important ? '<span class="text-amber-500 animate-pulse">⚠️</span>' : ''}
+                                        <h3 class="text-lg font-bold text-gray-800 leading-snug">${item.title}</h3>
+                                        <div class="flex gap-2 shrink-0 ml-2">
+                                            ${item.important ? '<span class="text-amber-500 animate-pulse text-lg" title="重要提醒">⚠️</span>' : ''}
                                             ${mapBtn}
                                         </div>
                                     </div>
-                                    <div class="mt-1 text-sm text-gray-600 desc-text">${item.desc}</div>
-                                    ${copyBtn}
+                                    <div class="mt-1 text-sm text-gray-600 desc-text leading-relaxed">${item.desc}</div>
+                                    ${toggleIndicator}
                                 </div>
                             </div>
                         </div>
@@ -322,115 +310,101 @@
             list.innerHTML = html;
         }
 
-        // 渲染班機
         function renderFlights() {
             const container = document.getElementById('view-flights');
-            container.innerHTML = `
-                <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    <span class="text-blue-600">✈️</span> 航班資訊
-                </h2>
-            ` + DATA.flights.map(f => `
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs px-3 py-1 rounded-bl-lg font-bold">
-                        ${f.type}
-                    </div>
+            container.innerHTML = DATA.flights.map(f => `
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 relative overflow-hidden mb-4">
+                    <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs px-3 py-1 rounded-bl-lg font-bold">${f.type}</div>
                     <div class="text-xs text-gray-500 font-bold mb-2">${f.date}</div>
                     <div class="flex justify-between items-center mb-4">
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-gray-800">${f.time.split('-')[0].trim()}</div>
-                            <div class="text-xs text-gray-500">${f.from}</div>
+                            <div class="text-3xl font-black text-gray-800">${f.time.split('-')[0].trim()}</div>
+                            <div class="text-xs text-gray-500 mt-1">${f.from}</div>
                         </div>
-                        <div class="flex-1 flex flex-col items-center px-2">
+                        <div class="flex-1 flex flex-col items-center px-4">
                              <div class="text-xs text-blue-600 font-bold mb-1">${f.airline}</div>
-                             <div class="w-full h-[1px] bg-gray-300 relative">
-                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-1">✈️</div>
-                             </div>
+                             <div class="w-full h-[1px] bg-gray-300 relative flex items-center justify-center"><div class="bg-white px-1 text-blue-400">✈</div></div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-gray-800">${f.time.split('-')[1].trim()}</div>
-                            <div class="text-xs text-gray-500">${f.to}</div>
+                            <div class="text-3xl font-black text-gray-800">${f.time.split('-')[1].trim()}</div>
+                            <div class="text-xs text-gray-500 mt-1">${f.to}</div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 p-2 rounded text-xs text-gray-600 border border-gray-100">
-                        ${f.note}
-                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg text-xs text-blue-800 border border-blue-100">${f.note}</div>
                 </div>
             `).join('');
         }
 
-        // 渲染住宿
         function renderHotels() {
             const container = document.getElementById('view-hotels');
-            container.innerHTML = `
-                <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    <span class="text-purple-600">🏨</span> 住宿資訊
-                </h2>
-            ` + DATA.hotels.map(h => `
-                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded">
-                            ${h.location}
-                        </span>
+            container.innerHTML = DATA.hotels.map(h => `
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded">${h.location}</span>
                         <span class="text-xs text-gray-400 font-medium">${h.dates}</span>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2 leading-tight">${h.name}</h3>
-                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                        <span>🕒 In ${h.checkIn} / Out ${h.checkOut}</span>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2 leading-tight">${h.name}</h3>
+                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-4 bg-gray-50 p-2 rounded w-fit">
+                        <span>In ${h.checkIn} / Out ${h.checkOut}</span>
                     </div>
-                    <div class="text-xs text-gray-600 bg-gray-50 p-3 rounded mb-3 whitespace-pre-wrap">${h.note}</div>
+                    <div class="text-sm text-gray-600 p-3 rounded border border-gray-100 mb-4 whitespace-pre-wrap leading-relaxed">${h.note}</div>
                     <div class="grid grid-cols-2 gap-3">
-                        <a href="${h.mapLink}" target="_blank" class="flex items-center justify-center gap-1 bg-gray-100 text-gray-600 py-2 rounded-lg text-xs font-medium">
-                            📍 地圖
-                        </a>
-                        <button onclick="copyText('${h.name}')" class="flex items-center justify-center gap-1 bg-purple-50 text-purple-600 py-2 rounded-lg text-xs font-medium">
-                            📋 複製
-                        </button>
+                        <a href="${h.mapLink}" target="_blank" class="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-medium transition-colors">📍 地圖</a>
+                        <button onclick="copyText('${h.name}')" class="flex items-center justify-center gap-2 bg-purple-50 hover:bg-purple-100 text-purple-700 py-3 rounded-xl text-sm font-medium transition-colors">📋 複製</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // 工具函式
         function toggleDesc(el) {
             const desc = el.querySelector('.desc-text');
-            if(desc) desc.classList.toggle('expanded');
+            const icon = el.querySelector('.toggle-icon');
+            const text = el.querySelector('.toggle-text');
+            if(desc) {
+                desc.classList.toggle('expanded');
+                if (desc.classList.contains('expanded')) {
+                    if(icon) icon.style.transform = 'rotate(180deg)';
+                    if(text) text.innerText = '收起';
+                } else {
+                    if(icon) icon.style.transform = 'rotate(0deg)';
+                    if(text) text.innerText = '展開詳情';
+                }
+            }
         }
 
         function copyText(text) {
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(() => alert('已複製: ' + text));
-            } else {
-                // Fallback for older browsers
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
                 document.execCommand('copy');
-                document.body.removeChild(textArea);
                 alert('已複製: ' + text);
+            } catch (err) {
+                alert('複製失敗');
             }
+            document.body.removeChild(textArea);
         }
 
         function getTypeColor(type) {
             switch(type) {
-                case 'transport': return '#3b82f6'; // Blue
-                case 'flight': return '#3b82f6';
-                case 'hotel': return '#a855f7'; // Purple
-                case 'food': return '#f97316'; // Orange
-                case 'shopping': return '#ec4899'; // Pink
-                default: return '#10b981'; // Emerald
+                case 'transport': return '#3b82f6';
+                case 'flight': return '#2563eb';
+                case 'hotel': return '#a855f7';
+                case 'food': return '#f97316';
+                case 'shopping': return '#ec4899';
+                default: return '#10b981';
             }
         }
 
         function getTypeIcon(type) {
-            // Simple SVG strings
             const icons = {
-                transport: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>',
-                flight: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>',
-                hotel: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zm-6-4a2 2 0 110-4 2 2 0 010 4zm6-10a2 2 0 110-4 2 2 0 010 4zm-6 4a2 2 0 110-4 2 2 0 010 4z"></path></svg>',
-                food: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>', // Using cart/utensils generic
-                shopping: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>',
-                activity: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>'
+                transport: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>',
+                flight: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>',
+                hotel: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zm-6-4a2 2 0 110-4 2 2 0 010 4zm6-10a2 2 0 110-4 2 2 0 010 4zm-6 4a2 2 0 110-4 2 2 0 010 4z"></path></svg>',
+                food: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>', 
+                shopping: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>',
+                activity: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>'
             };
             return icons[type] || icons.activity;
         }
