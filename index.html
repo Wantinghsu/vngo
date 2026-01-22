@@ -122,7 +122,7 @@
                 // Day 1
                 { dayId: 1, time: "17:25", title: "✈️ 飛機航行", desc: "台灣虎航 IT551 (桃園T1 -> 峴港)\n機上有供餐。", type: "flight" },
                 { dayId: 1, time: "19:10", title: "🛬 入境領行李", desc: "峴港機場入境大廳。", type: "activity", map: "Da Nang Airport" },
-                { dayId: 1, time: "19:40", title: "🚗 前往市區", desc: "預約接送 (16人座車) 前往市區。", type: "transport", tag: "接送" },
+                { dayId: 1, time: "19:40", title: "🚗 前往市區", desc: "預約接送 (16人座車) 前往市區。", type: "transport", tag: "預約接送" },
                 { dayId: 1, time: "20:00", title: "💰 機場換匯", desc: "先在機場換少量越南盾。\n⚠️ 注意：機場匯率可能較差，且櫃檯多在 20:00 左右關閉，若來不及請改至市區。", type: "activity", important: true },
                 { dayId: 1, time: "20:30", title: "🏨 Check-in", desc: "Cozy Danang Boutique Hotel\n放置行李。", type: "hotel", map: "Cozy Danang Boutique Hotel" },
                 { dayId: 1, time: "21:00", title: "🍜 晚餐：功夫麵", desc: "Kungfu Noodle Restaurant (營業至 21:30)。\n網友推薦：牛肉麵、廣南麵 (平價好吃)。", type: "food", map: "Kungfu Noodle Restaurant" },
@@ -130,11 +130,11 @@
                 
                 // Day 2
                 { dayId: 2, time: "07:00", title: "🥣 早餐：飯店", desc: "飯店早餐 (供應時間 06:30-10:00)。", type: "food" },
-                { dayId: 2, time: "07:30", title: "🚌 前往巴拿山", desc: "KKday 接送 (請在飯店大廳等候)。\n⚠️ 重要：山上氣溫低 5-10 度，務必帶外套和雨具。", type: "transport", tag: "KKday", important: true },
+                { dayId: 2, time: "07:30", title: "🚌 前往巴拿山", desc: "KKday 接送 (請在飯店大廳等候)。\n⚠️ 重要：山上氣溫低 5-10 度，務必帶外套和雨具。", type: "transport", tag: "KKday 接送", important: true },
                 { dayId: 2, time: "08:30", title: "🚠 纜車 & 黃金佛手橋", desc: "搭乘纜車上山。\n參觀：佛手橋、愛情花園、黛貝酒窖。", type: "activity", map: "Golden Bridge Da Nang" },
                 { dayId: 2, time: "12:30", title: "🍔 午餐：山上小吃", desc: "建議在山上攤販或 Buffet 解決。\n(連結為地圖位置)", type: "food", map: "Ba Na Hills Sun World" },
                 { dayId: 2, time: "14:00", title: "🏰 法國村 & 樂園", desc: "遊覽法國村拍照。\nFantasy Park：室內遊樂園，過山車 (約 124 TWD)。", type: "activity" },
-                { dayId: 2, time: "16:30", title: "🚌 下山 & 返回市區", desc: "搭纜車下山，搭乘接送車返回峴港市區。", type: "transport", tag: "KKday" },
+                { dayId: 2, time: "16:30", title: "🚌 下山 & 返回市區", desc: "搭纜車下山，搭乘接送車返回峴港市區。", type: "transport", tag: "KKday 接送" },
                 { dayId: 2, time: "18:30", title: "💰 補換匯", desc: "前往漢市場周邊銀樓補換越南盾。", type: "activity", map: "Han Market Gold Shop" },
                 { dayId: 2, time: "19:00", title: "🦞 晚餐：韓江畔/海鮮", desc: "建議：韓江邊餐廳用餐 (景觀或海鮮)。\n餐後可步行至龍橋。", type: "food" },
                 { dayId: 2, time: "20:30", title: "🐉 龍橋噴火秀", desc: "⚠️ 噴火時間約 15 分鐘。\n記得站在「逆風處」避免被水噴濕。", type: "activity", important: true, map: "Dragon Bridge Da Nang" },
@@ -152,30 +152,28 @@
 
                 // Day 4
                 { dayId: 4, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐，吃飽準備長途車程。", type: "food" },
-                { dayId: 4, time: "09:00", title: "🚗 前往順化 (包車)", desc: "KLOOK 包車 12小時。\n途經：海雲關隘口、陵姑灣 (人生必去50景點)。", type: "transport", tag: "包車12H", charter: true, map: "Hai Van Pass" },
+                { dayId: 4, time: "09:00", title: "🚗 前往順化 (包車)", desc: "KLOOK 包車 12小時。\n途經：海雲關隘口、陵姑灣 (人生必去50景點)。", type: "transport", tag: "KLOOK 包車 (12小時)", charter: true, map: "Hai Van Pass" },
                 { dayId: 4, time: "11:30", title: "🍜 午餐：順化料理", desc: "推薦：Madame Thu 或 Quan Hanh。\n必吃：順化牛肉粉 (Bun Bo Hue)、浮萍餅。", type: "food", charter: true, map: "Madame Thu Restaurant - Hue" },
                 { dayId: 4, time: "12:30", title: "🏯 順化皇城", desc: "越南縮小版紫禁城，參觀約 2H。", type: "activity", charter: true, map: "Hue Imperial City" },
                 { dayId: 4, time: "15:00", title: "🏛️ 啟定皇陵 / 天姥寺", desc: "主行程：啟定皇陵 (融合東西方建築)。\n備案：天姥寺 (Thien Mu Pagoda) 若時間充裕可去。", type: "activity", charter: true, map: "Tomb of Khai Dinh" },
-                { dayId: 4, time: "16:30", title: "🚗 返回峴港", desc: "車程約 2.5 小時，經海雲隧道返回。", type: "transport", charter: true },
-                { dayId: 4, time: "19:00", title: "🍢 晚餐：山茶夜市", desc: "烤龍蝦、海鮮盤、越式煎餅。\n⚠️ 備註：若擔心海鮮不新鮮，可純逛街，吃別的。", type: "food", map: "Son Tra Night Market" },
-                { dayId: 4, time: "21:00", title: "🐉 龍橋噴火 (備案)", desc: "每週五、六、日 21:00 噴火。\n若 Day 2 沒看到，今晚可補看。", type: "activity", important: true },
+                { dayId: 4, time: "16:00", title: "🚗 返回峴港", desc: "車程約 2 小時，經海雲隧道返回。", type: "transport", charter: true },
+                { dayId: 4, time: "18:00", title: "🍢 晚餐：山茶夜市", desc: "烤龍蝦、海鮮盤、越式煎餅。\n⚠️ 備註：若擔心海鮮不新鮮，可純逛街，吃別的。", type: "food", map: "Son Tra Night Market" },
+                { dayId: 4, time: "20:30", title: "🐉 龍橋噴火 (備案)", desc: "每週五、六、日 21:00 噴火。\n若 Day 2 沒看到，今晚可補看。", type: "activity", important: true },
                 { dayId: 4, time: "22:00", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel (最後一晚)。", type: "hotel" },
 
                 // Day 5
                 { dayId: 5, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐。\n用餐後整理行李退房。", type: "food" },
-                { dayId: 5, time: "09:00", title: "🚗 前往迦南島", desc: "帶著行李移動，包車前往。", type: "transport", tag: "包車4H", charter: true },
+                { dayId: 5, time: "09:00", title: "🚗 前往迦南島", desc: "帶著行李移動，包車前往。", type: "transport", tag: "KLOOK 包車 (4小時)", charter: true },
                 { dayId: 5, time: "10:00", title: "🥥 迦南島竹籃船", desc: "體驗傳統桶船旋轉表演 (約1小時)。\n⚠️ 船夫小費約 20,000-50,000 VND。", type: "activity", important: true, charter: true },
-                { dayId: 5, time: "11:30", title: "🍲 午餐：Nhà hàng Bông Dừa", desc: "Bông Dừa Restaurant。\n特色：海鮮火鍋、烤蝦、炒空心菜。", type: "food", charter: true, map: "Nhà hàng Bông Dừa Hoi An" },
-                { dayId: 5, time: "13:00", title: "🏨 前往會安 & Check-in", desc: "包車結束，前往 Lantana Boutique Hoi An Hotel 放行李。", type: "hotel", charter: true, map: "Lantana Boutique Hoi An Hotel" },
-                { dayId: 5, time: "14:00", title: "🏮 會安古城漫遊", desc: "景點：日本橋、福建會館。\n下午茶：Mot Hoi An (荷花茶)、Faifo Coffee (頂樓景)。", type: "activity", map: "Hoi An Ancient Town" },
-                { dayId: 5, time: "16:00", title: "🎡 樂園迎賓秀", desc: "會安印象樂園 16:00 入園換票 (KKday)。\n觀賞迎賓秀 (Mini Shows)。", type: "activity" },
-                { dayId: 5, time: "17:30", title: "🍽️ 晚餐：Nón Lá (斗笠)", desc: "園區內自助餐。", type: "food" },
-                { dayId: 5, time: "20:00", title: "🎭 會安回憶秀", desc: "《會安回憶》實景秀 (Main Show) 20:00-21:00。\n\n詳細流程：\n16:30-17:30 迎賓秀\n17:30-18:45 晚餐\n18:45-19:30 夜景&特色小秀(玉華公主大婚)\n19:30-19:50 詢問工作人員 'VIP Elevator' 進場\n\n⚠️ 散場建議：走出劇場後過橋，走到大馬路叫 Grab。", type: "activity", important: true },
+                { dayId: 5, time: "11:00", title: "🍲 午餐：Nhà hàng Bông Dừa", desc: "Bông Dừa Restaurant。\n特色：海鮮火鍋、烤蝦、炒空心菜。", type: "food", charter: true, map: "Nhà hàng Bông Dừa Hoi An" },
+                { dayId: 5, time: "12:30", title: "🏨 前往會安 & Check-in", desc: "包車結束，前往 Lantana Boutique Hoi An Hotel 放行李。", type: "hotel", charter: true, map: "Lantana Boutique Hoi An Hotel" },
+                { dayId: 5, time: "13:00", title: "🏮 會安古城漫遊", desc: "景點：日本橋、福建會館。\n下午茶：Mot Hoi An (荷花茶)、Faifo Coffee (頂樓景)。", type: "activity", map: "Hoi An Ancient Town" },
+                { dayId: 5, time: "16:00", title: "🎡 前往會安印象樂園", desc: "16:00入園(KKDAY換票)\n\n《詳細活動流程》\n16:30 - 17:30｜園區漫步 & 觀賞迎賓秀 (Mini Shows)：迎親隊伍、古代商貿場景\n17:30 - 18:45｜晚餐：Nón Lá (斗笠) 餐廳自助餐\n18:45 - 19:30｜夜景 & 特色小秀（街道後段有 《玉華公主大婚》、《比武招親》）\n19:30 - 19:50｜前往劇場 & VIP 尊榮入場 ：詢問工作人員 \"VIP Elevator\"\n20:00 - 21:00｜《會安回憶》實景秀 (Main Show)\n\n⚠️ 散場技巧：VIP 離場通常也比較快（有獨立通道）。走出劇場後，建議快速通過橋，走到園區大門外的馬路邊。打開 Grab 定位在 \"Hoi An Impression Theme Park Gate\"。", type: "activity" },
                 { dayId: 5, time: "21:30", title: "🛌 回飯店休息", desc: "Lantana Boutique Hoi An Hotel。", type: "hotel" },
 
                 // Day 6
                 { dayId: 6, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐。", type: "food" },
-                { dayId: 6, time: "09:00", title: "🚗 前往美山聖地", desc: "車程約 1 小時。", type: "transport", tag: "包車4H", charter: true },
+                { dayId: 6, time: "09:00", title: "🚗 前往美山聖地", desc: "車程約 1 小時。", type: "transport", tag: "KLOOK 包車 (4小時)", charter: true },
                 { dayId: 6, time: "10:00", title: "🛕 美山聖地", desc: "參觀占婆王國遺址 (小吳哥窟)。\n有接駁車與舞蹈表演。", type: "activity", map: "My Son Sanctuary", charter: true },
                 { dayId: 6, time: "12:00", title: "🚗 返回會安", desc: "搭車返回會安市區 (約1小時)。", type: "transport", charter: true },
                 { dayId: 6, time: "13:30", title: "🥖 午餐：古城小吃", desc: "推薦：Madam Khan (越式法國麵包) 或 Banh Mi Phuong。", type: "food", map: "Madam Khan - The Banh Mi Queen" },
@@ -187,7 +185,7 @@
 
                 // Day 7
                 { dayId: 7, time: "06:30", title: "🥣 早餐：飯店", desc: "飯店簡易早餐 / 辦理退房。", type: "food" },
-                { dayId: 7, time: "07:00", title: "🚌 前往峴港機場", desc: "從會安出發，預留車程時間。\n(KKday 接送)", type: "transport", tag: "KKday" },
+                { dayId: 7, time: "07:00", title: "🚌 前往峴港機場", desc: "從會安出發，預留車程時間。\n(KKday 接送)", type: "transport", tag: "KKday 接送" },
                 { dayId: 7, time: "08:00", title: "🛫 機場報到", desc: "辦理登機、最後免稅店採買。", type: "activity" },
                 { dayId: 7, time: "10:20", title: "✈️ 飛機返程", desc: "華航 CI788 (峴港 T2 -> 桃園 T1)。\n14:05 抵達台灣。", type: "flight" }
             ]
@@ -259,9 +257,10 @@
                     const typeIcon = getTypeIcon(item.type);
                     const transportBadge = item.tag ? `<div class="bg-blue-50 px-3 py-1.5 border-b border-blue-100 flex items-center gap-1 text-xs font-bold text-blue-700">${item.tag}</div>` : '';
                     
-                    // Charter highlight
+                    // Charter highlight: Light blue background to show duration
                     const charterClass = item.charter ? 'border-2 border-l-4 border-blue-200 bg-blue-50/20' : '';
-                    const importantStyle = item.important ? 'border-l-4 border-l-amber-400 bg-amber-50/40' : '';
+                    // Important style: Now standard, relying on emoji for warning
+                    const importantStyle = ''; 
                     const finalStyle = item.charter ? charterClass : importantStyle;
 
                     const mapBtn = item.map ? `
@@ -294,7 +293,7 @@
                                     <div class="flex justify-between items-start">
                                         <h3 class="text-lg font-bold text-gray-800 leading-snug">${item.title}</h3>
                                         <div class="flex gap-2 shrink-0 ml-2">
-                                            ${item.important ? '<span class="text-amber-500 animate-pulse text-lg" title="重要提醒">⚠️</span>' : ''}
+                                            ${item.important ? '<span class="text-gray-500 text-lg" title="重要提醒">⚠️</span>' : ''}
                                             ${mapBtn}
                                         </div>
                                     </div>
@@ -323,7 +322,7 @@
                         </div>
                         <div class="flex-1 flex flex-col items-center px-4">
                              <div class="text-xs text-blue-600 font-bold mb-1">${f.airline}</div>
-                             <div class="w-full h-[1px] bg-gray-300 relative flex items-center justify-center"><div class="bg-white px-1 text-blue-400">✈</div></div>
+                             <div class="w-full h-[1px] bg-gray-300 relative flex items-center justify-center"></div>
                         </div>
                         <div class="text-center">
                             <div class="text-3xl font-black text-gray-800">${f.time.split('-')[1].trim()}</div>
