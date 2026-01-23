@@ -47,7 +47,7 @@
 <body class="h-[100dvh] flex flex-col overflow-hidden max-w-md mx-auto bg-gray-50 shadow-2xl relative">
 
     <!-- Header -->
-    <header class="bg-teal-700 text-white px-5 pt-safe-top pb-4 shadow-md z-20 shrink-0">
+    <header class="bg-teal-700 text-white px-5 pt-safe-top pb-4 shadow-md z-50 shrink-0 relative">
         <div class="flex justify-between items-center pt-2">
             <div>
                 <h1 class="text-xl font-bold tracking-tight">2026 峴港 7天6夜</h1>
@@ -67,7 +67,8 @@
         
         <!-- 行程 Tab -->
         <div id="view-itinerary" class="tab-content active">
-            <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-200 py-3 shadow-sm">
+            <!-- 修正 Z-Index 為 z-40，確保高於行程 Icon (z-10) -->
+            <div class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 py-3 shadow-sm">
                 <div id="day-selector" class="flex px-4 gap-3 overflow-x-auto hide-scrollbar"></div>
             </div>
             <div id="itinerary-list" class="p-4 space-y-4"></div>
@@ -81,7 +82,7 @@
     </main>
 
     <!-- Footer Nav -->
-    <nav class="bg-white border-t border-gray-200 shrink-0 pb-safe z-30 fixed bottom-0 w-full max-w-md">
+    <nav class="bg-white border-t border-gray-200 shrink-0 pb-safe z-50 fixed bottom-0 w-full max-w-md">
         <div class="flex justify-around items-center h-16">
             <button onclick="switchTab('itinerary')" id="btn-itinerary" class="nav-btn flex flex-col items-center justify-center w-full h-full text-teal-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
@@ -409,3 +410,4 @@
     </script>
 </body>
 </html>
+
