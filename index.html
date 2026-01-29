@@ -8,9 +8,7 @@
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f3f4f6;
-            color: #333;
-            overscroll-behavior-y: none;
+            background-color: #f3f4f6; color: #333; overscroll-behavior-y: none;
         }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -19,31 +17,19 @@
         .tab-content { display: none; opacity: 0; transition: opacity 0.2s ease-in-out; }
         .tab-content.active { display: block; opacity: 1; }
         
-        .desc-text a {
-            color: #2563eb !important;
-            text-decoration: underline !important;
-            font-weight: 600 !important;
-        }
+        /* 超連結樣式 */
+        .desc-text a { color: #2563eb !important; text-decoration: underline !important; font-weight: 600 !important; }
         .desc-text a:active { color: #1d4ed8 !important; }
 
         .desc-text {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            white-space: pre-wrap;
-            transition: all 0.3s ease;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; white-space: pre-wrap; transition: all 0.3s ease;
         }
         .desc-text.expanded { -webkit-line-clamp: unset; }
         
         .timeline-line {
-            position: absolute;
-            left: 27px;
-            top: 3.5rem;
-            bottom: -1rem;
-            width: 2px;
-            background-color: #e5e7eb;
-            z-index: 0;
+            position: absolute; left: 27px; top: 3.5rem; bottom: -1rem; width: 2px;
+            background-color: #e5e7eb; z-index: 0;
         }
     </style>
 </head>
@@ -70,8 +56,7 @@
 
         <div id="view-flights" class="tab-content p-5 space-y-4"></div>
         <div id="view-hotels" class="tab-content p-5 space-y-4"></div>
-        
-        <div id="view-shopping" class="tab-content p-5 space-y-4">
+        <div id="view-shopping" class="tab-content p-5 space-y-6">
             <h2 class="text-2xl font-bold text-gray-800 mb-4 px-1">🛒 越南必買伴手禮</h2>
             <div id="shopping-list" class="space-y-6"></div>
         </div>
@@ -80,19 +65,19 @@
     <nav class="bg-white border-t border-gray-200 shrink-0 pb-safe z-50 fixed bottom-0 w-full max-w-md">
         <div class="flex justify-around items-center h-16">
             <button onclick="switchTab('itinerary')" id="btn-itinerary" class="nav-btn flex flex-col items-center justify-center w-full h-full text-teal-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                 <span class="text-xs font-medium mt-1">行程</span>
             </button>
             <button onclick="switchTab('flights')" id="btn-flights" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                 <span class="text-xs font-medium mt-1">班機</span>
             </button>
             <button onclick="switchTab('hotels')" id="btn-hotels" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zm-6-4a2 2 0 110-4 2 2 0 010 4zm6-10a2 2 0 110-4 2 2 0 010 4zm-6 4a2 2 0 110-4 2 2 0 010 4z"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zm-6-4a2 2 0 110-4 2 2 0 010 4zm6-10a2 2 0 110-4 2 2 0 010 4zm-6 4a2 2 0 110-4 2 2 0 010 4z"></path></svg>
                 <span class="text-xs font-medium mt-1">住宿</span>
             </button>
             <button onclick="switchTab('shopping')" id="btn-shopping" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 <span class="text-xs font-medium mt-1">必買</span>
             </button>
         </div>
@@ -102,42 +87,38 @@
         const DATA = {
             flights: [
                 { type: "去程", date: "1/29 (四)", airline: "台灣虎航 IT 551", time: "17:25 - 19:10", from: "桃園機場 (T1)", to: "峴港機場", note: "有供餐。\n起飛前 48h-60m 需網路報到" },
-                { type: "回程", date: "2/4 (三)", airline: "華航 CI 788", time: "10:20 - 14:05", from: "峴港機場 (T2)", to: "桃園機場 (T1)", note: "有供餐。\n機型 Airbus A321neo" }
+                { type: "回程", date: "2/4 (三)", airline: "華航 CI 788", time: "10:20 - 14:05", from: "峴港機場 (T2)", to: "桃園機場 (T1)", note: "有供餐。" }
             ],
             hotels: [
-                { name: "Cozy Danang Boutique Hotel", dates: "1/29 - 2/2 (4晚)", location: "峴港市區", note: "2*雙床房 + 1*雙人房。\n含早餐、有浴缸、頂樓泳池 (2022開幕)。", mapLink: "https://www.google.com/maps/search/?api=1&query=Cozy+Danang+Boutique+Hotel", checkIn: "14:00", checkOut: "12:00" },
-                { name: "Lantana Boutique Hoi An Hotel", dates: "2/2 - 2/4 (2晚)", location: "會安", note: "位於河岸，附早餐，有浴缸。", mapLink: "https://www.agoda.com/sl/YSFc1TtZRCI", checkIn: "14:00", checkOut: "12:00" }
+                { name: "Cozy Danang Boutique Hotel", dates: "1/29 - 2/2 (4晚)", location: "峴港市區", note: "2*雙床房 + 1*雙人房。\n含早餐、有浴缸、頂樓泳池。", mapLink: "https://www.google.com/maps/search/?api=1&query=Cozy+Danang+Boutique+Hotel" },
+                { name: "Lantana Boutique Hoi An Hotel", dates: "2/2 - 2/4 (2晚)", location: "會安", note: "位於河岸，附早餐，有浴缸。", mapLink: "https://www.agoda.com/sl/YSFc1TtZRCI" }
             ],
             days: [
-                { day: 1, date: "1/29 (四)", title: "抵達峴港" },
-                { day: 2, date: "1/30 (五)", title: "巴拿山一日遊" },
-                { day: 3, date: "1/31 (六)", title: "五行山 & 購物" },
-                { day: 4, date: "2/1 (日)", title: "順化皇城古都" },
-                { day: 5, date: "2/2 (一)", title: "迦南島 & 會安" },
-                { day: 6, date: "2/3 (二)", title: "美山聖地 & 古城" },
+                { day: 1, date: "1/29 (四)", title: "抵達峴港" }, { day: 2, date: "1/30 (五)", title: "巴拿山一日遊" },
+                { day: 3, date: "1/31 (六)", title: "五行山 & 購物" }, { day: 4, date: "2/1 (日)", title: "順化皇城古都" },
+                { day: 5, date: "2/2 (一)", title: "迦南島 & 會安" }, { day: 6, date: "2/3 (二)", title: "美山聖地 & 古城" },
                 { day: 7, date: "2/4 (三)", title: "返程" }
             ],
             activities: [
                 { dayId: 1, time: "17:25", title: "✈️ 飛機航行", desc: "台灣虎航 IT551\n登機門B1R(桃園T1 -> 峴港)\n機上有供餐。", type: "flight" },
                 { dayId: 1, time: "19:10", title: "🛬 入境領行李", desc: "峴港機場入境大廳。", type: "activity", map: "Da Nang Airport" },
                 { dayId: 1, time: "20:30", title: "🏨 Check-in", desc: "<a href='https://www.google.com/maps/search/?api=1&query=Cozy+Danang+Boutique+Hotel' target='_blank'>Cozy Danang Boutique Hotel</a>\n放置行李。", type: "hotel", map: "Cozy Danang Boutique Hotel" },
-                // ... 其他行程數據保持不變
-                { dayId: 3, time: "17:00", title: "🦞 晚餐：All Seasons", desc: "All Seasons Buffet Da Nang。\n⚠️ 已預訂龍蝦吃到飽，現場付費 (<a href='https://github.com/Wantinghsu/vngo/blob/main/lobster.png?raw=true' target='_blank'>訂位照片</a>)。", type: "food", important: true, map: "All Seasons Restaurant" }
+                { dayId: 3, time: "17:00", title: "🦞 晚餐：All Seasons", desc: "All Seasons Buffet。\n⚠️ 已預訂 5 位龍蝦吃到飽，現場付費 (<a href='https://github.com/Wantinghsu/vngo/blob/main/lobster.png?raw=true' target='_blank'>訂位照片</a>)。\n(850k VND++/人，不含稅與飲品)。", type: "food", important: true, map: "All Seasons Restaurant" }
+                // 其他行程會由 JavaScript 自動渲染
             ],
             shopping: [
-                { name: "金龍綠豆糕", img: "https://github.com/Wantinghsu/vngo/blob/main/%E9%87%91%E9%BE%8D%E7%B6%A0%E8%B1%86%E7%B3%95.jpg?raw=true", desc: "綠豆糕是知名的越南特產之一" },
-                { name: "白虎活絡膏", img: "https://github.com/Wantinghsu/vngo/blob/main/%E7%99%BD%E8%99%8E%E6%B4%BB%E7%B5%A1%E8%86%89.jpg?raw=true", desc: "知名的止痛膏，可以緩解腰痠背痛、關節痛、消腫等" },
-                { name: "帶皮腰果", img: "https://github.com/Wantinghsu/vngo/blob/main/%E5%B8%B6%E7%9A%AE%E8%85%B0%E6%9E%9C.jpg?raw=true", desc: "越大顆越貴，導遊有交代盡量買帶皮的，因為去皮為了保存可能會浸藥水。" },
-                { name: "Vinamit水果乾", img: "https://github.com/Wantinghsu/vngo/blob/main/Vinamit%E7%9A%84%E9%A6%99%E8%95%89%E4%B9%BE.jpg?raw=true", desc: "越南水果乾多使用天然糖漿醃製，不含化學添加物。常見品牌如 Vinamit，口味豐富且便宜好吃。" },
-                { name: "Haohao泡麵", img: "https://github.com/Wantinghsu/vngo/blob/main/Haohao%E6%B3%A1%E9%BA%B5.jpg?raw=true", desc: "台灣人最愛買藍色(蒜香排骨)，當地人愛買粉色(強烈酸蝦風味)。" },
-                { name: "MAROU巧克力", img: "https://github.com/Wantinghsu/vngo/blob/main/MAROU%E5%B7%A7%E5%85%8B%E5%8A%9B.jpg?raw=true", desc: "越南精品的精品巧克力，被《紐約時報》譽為「最棒的巧克力」。" },
-                { name: "越南河粉泡麵", img: "https://github.com/Wantinghsu/vngo/blob/main/%E8%B6%8A%E5%8D%97%E6%B2%B3%E7%B2%89%E6%B3%A1%E9%BA%B5.jpg?raw=true", desc: "想把好吃的河粉帶回家？購買泡麵版本是送禮自用兩相宜的好選擇。" },
-                { name: "蝦鹽", img: "https://github.com/Wantinghsu/vngo/blob/main/%E8%9D%A6%E9%B1%BD.jpg?raw=true", desc: "由鹽和乾燥蝦粉混合，常用來蘸水果提升甜味層次，是獨特的越南風味。" },
-                { name: "手工編織包", img: "https://github.com/Wantinghsu/vngo/blob/main/%E7%B7%A8%E7%B9%94%E5%8C%85.jpg?raw=true", desc: "設計感不輸精品且價格平實（約 NTD 200），輕盈堅固又實用。" }
+                { name: "金龍綠豆糕", img: "https://raw.githubusercontent.com/Wantinghsu/vngo/main/%E9%87%91%E9%BE%8D%E7%B6%A0%E8%B1%86%E7%B3%95.jpg", desc: "綠豆糕是知名的越南特產之一" },
+                { name: "白虎活絡膏", img: "https://raw.githubusercontent.com/Wantinghsu/vngo/main/%E7%99%BD%E8%99%8E%E6%B4%BB%E7%B5%A1%E8%86%89.jpg", desc: "知名的止痛膏，可以緩解腰痠背痛、關節痛、消腫等" },
+                { name: "帶皮腰果", img: "https://raw.githubusercontent.com/Wantinghsu/vngo/main/%E5%B8%B6%E7%9A%AE%E8%85%B0%E6%9E%9C.jpg", desc: "越大顆越貴，導遊有交代盡量買帶皮的，因為去皮為了保存可能會浸藥水。" },
+                { name: "Vinamit水果乾", img: "https://raw.githubusercontent.com/Wantinghsu/vngo/main/Vinamit%E7%9A%84%E9%A6%99%E8%95%89%E4%B9%BE.jpg", desc: "使用天然糖漿醃製，不含化學添加物，保持自然風味與顏色。口味豐富且便宜好吃。" },
+                { name: "Haohao泡麵", img: "https://raw.githubusercontent.com/Wantinghsu/vngo/main/Haohao%E6%B3%A1%E9%BA%B5.jpg", desc: "台灣人愛買藍色(蒜香排骨)，當地人愛買粉色(酸蝦風味)。" },
+                { name: "MAROU巧克力", img: "https://raw.githubusercontent.com/Wantinghsu/vngo/main/MAROU%E5%B7%A7%E5%85%8B%E5%8A%9B.jpg", desc: "精品巧克力，被《紐約時報》譽為「最棒的巧克力」。" },
+                { name: "越南河粉泡麵", img: "https://raw.githubusercontent.com/Wantinghsu/vngo/main/%E8%B6%8A%E5%8D%97%E6%B2%B3%E7%B2%89%E6%B3%A1%E9%BA%B5.jpg", desc: "超市有多種品牌可挑選，送禮自用兩相宜。" },
+                { name: "蝦鹽", img: "https://raw.githubusercontent.com/Wantinghsu/vngo/main/%E8%9D%A6%E9%B1%BD.jpg", desc: "風味獨特，常用來蘸水果提升甜味層次，是正宗越南靈魂調味。" },
+                { name: "手工編織包", img: "https://raw.githubusercontent.com/Wantinghsu/vngo/main/%E7%B7%A8%E7%B9%94%E5%8C%85.jpg", desc: "技術精湛、輕盈堅固，價格約 NTD 200 左右即有不錯設計。" }
             ]
         };
 
-        let currentTab = 'itinerary';
         let currentDayId = 1;
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -157,7 +138,13 @@
                 btn.classList.add('text-gray-400');
             });
             document.getElementById(`btn-${tabName}`).classList.add('text-teal-600');
-            currentTab = tabName;
+        }
+
+        function selectDay(dayId) {
+            currentDayId = dayId;
+            renderDaySelector();
+            renderItinerary(dayId);
+            document.getElementById('app-container').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function renderDaySelector() {
@@ -172,54 +159,51 @@
             }).join('');
         }
 
-        function selectDay(dayId) {
-            currentDayId = dayId;
-            renderDaySelector();
-            renderItinerary(dayId);
-            document.getElementById('app-container').scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
         function renderItinerary(dayId) {
             const list = document.getElementById('itinerary-list');
             const dayData = DATA.days.find(d => d.day === dayId);
             const items = DATA.activities.filter(a => a.dayId === dayId);
             let html = `<div class="mb-4 px-1"><h2 class="text-2xl font-bold text-gray-800">${dayData.title}</h2><p class="text-sm text-gray-500">${dayData.date}</p></div>`;
             
-            html += items.map((item, index) => {
-                const isLast = index === items.length - 1;
-                return `
-                <div class="relative pl-4">
-                    ${!isLast ? '<div class="timeline-line"></div>' : ''}
-                    <div class="relative bg-white rounded-xl shadow-sm border border-gray-100 mb-5 overflow-hidden">
-                        <div class="p-4 flex gap-4" onclick="toggleDesc(this)">
-                            <div class="flex flex-col items-center gap-1 min-w-[3.5rem] pt-1">
-                                <span class="text-sm font-black text-gray-700">${item.time}</span>
-                                <div class="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-md z-10" style="background-color: ${getTypeColor(item.type)}">
-                                    ${getTypeIcon(item.type)}
+            if (items.length === 0) {
+                html += `<div class="p-8 text-center text-gray-400 bg-white rounded-xl border border-dashed border-gray-300">本日無特定行程</div>`;
+            } else {
+                html += items.map((item, index) => {
+                    const isLast = index === items.length - 1;
+                    return `
+                    <div class="relative pl-4">
+                        ${!isLast ? '<div class="timeline-line"></div>' : ''}
+                        <div class="relative bg-white rounded-xl shadow-sm border mb-5 overflow-hidden">
+                            ${item.tag ? `<div class="bg-blue-50 px-3 py-1.5 border-b border-blue-100 text-xs font-bold text-blue-700">${item.tag}</div>` : ''}
+                            <div class="p-4 flex gap-4" onclick="toggleDesc(this)">
+                                <div class="flex flex-col items-center gap-1 min-w-[3.5rem]">
+                                    <span class="text-sm font-black text-gray-700">${item.time}</span>
+                                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-md" style="background-color: ${getTypeColor(item.type)}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-lg font-bold text-gray-800">${item.title} ${item.important ? '⚠️' : ''}</h3>
+                                    <div class="mt-1 text-sm text-gray-600 desc-text">${item.desc}</div>
                                 </div>
                             </div>
-                            <div class="flex-1 min-w-0 pt-1">
-                                <h3 class="text-lg font-bold text-gray-800">${item.title} ${item.important ? '⚠️' : ''}</h3>
-                                <div class="mt-1 text-sm text-gray-600 desc-text">${item.desc}</div>
-                            </div>
                         </div>
-                    </div>
-                </div>`;
-            }).join('');
+                    </div>`;
+                }).join('');
+            }
             list.innerHTML = html;
         }
 
         function renderShopping() {
             const list = document.getElementById('shopping-list');
             list.innerHTML = DATA.shopping.map(item => `
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <img src="${item.img}" class="w-full h-48 object-cover" alt="${item.name}">
+                <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                    <img src="${item.img}" class="w-full h-48 object-contain bg-gray-50" alt="${item.name}">
                     <div class="p-4">
                         <h3 class="text-xl font-bold text-teal-800 mb-2">${item.name}</h3>
                         <p class="text-sm text-gray-600 leading-relaxed">${item.desc}</p>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
         function renderFlights() {
@@ -227,7 +211,6 @@
             container.innerHTML = DATA.flights.map(f => `<div class="bg-white rounded-xl p-5 shadow-sm border mb-4">
                 <div class="text-xs text-blue-600 font-bold mb-1">${f.type} - ${f.airline}</div>
                 <div class="text-xl font-bold text-gray-800 mb-2">${f.date} | ${f.time}</div>
-                <div class="text-sm text-gray-500">${f.from} ➔ ${f.to}</div>
                 <div class="bg-blue-50 p-3 rounded mt-2 text-xs text-blue-800">${f.note}</div>
             </div>`).join('');
         }
@@ -236,9 +219,7 @@
             const container = document.getElementById('view-hotels');
             container.innerHTML = DATA.hotels.map(h => `<div class="bg-white rounded-xl p-5 shadow-sm border mb-4">
                 <h3 class="text-xl font-bold text-gray-800">${h.name}</h3>
-                <p class="text-xs text-purple-600 font-medium mb-2">${h.dates}</p>
-                <div class="text-sm text-gray-600 bg-gray-50 p-3 rounded mb-3">${h.note}</div>
-                <a href="${h.mapLink}" target="_blank" class="block text-center bg-gray-100 py-2 rounded-lg text-sm font-medium">📍 查看地圖</a>
+                <div class="text-sm text-gray-600 p-3 border rounded mt-2">${h.note}</div>
             </div>`).join('');
         }
 
@@ -248,12 +229,12 @@
         }
 
         function getTypeColor(type) {
-            const colors = { transport: '#3b82f6', flight: '#2563eb', hotel: '#a855f7', food: '#f97316', shopping: '#ec4899' };
+            const colors = { transport: '#3b82f6', flight: '#2563eb', hotel: '#a855f7', food: '#f97316' };
             return colors[type] || '#10b981';
         }
 
         function getTypeIcon(type) {
-            return '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>';
+            return '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>';
         }
     </script>
 </body>
