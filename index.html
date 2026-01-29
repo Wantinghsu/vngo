@@ -54,10 +54,6 @@
         /* 結算區塊動畫 */
         #settlement-details { transition: max-height 0.3s ease-out, opacity 0.3s ease; overflow: hidden; max-height: 0; opacity: 0; }
         #settlement-details.open { max-height: 500px; opacity: 1; }
-
-        /* 天氣小卡動畫 */
-        #weather-widget { transition: all 0.5s ease; }
-        .weather-loading { opacity: 0.5; filter: blur(2px); }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden max-w-md mx-auto bg-gray-50 shadow-2xl relative">
@@ -80,25 +76,6 @@
             <div class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 py-3 shadow-sm">
                 <div id="day-selector" class="flex px-4 gap-3 overflow-x-auto hide-scrollbar"></div>
             </div>
-            
-            <div class="px-4 mt-4">
-                <div id="weather-widget" class="bg-gradient-to-r from-blue-500 to-teal-400 rounded-xl p-4 text-white shadow-lg flex justify-between items-center relative overflow-hidden">
-                    <div class="relative z-10">
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs font-bold bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm" id="weather-location">載入中...</span>
-                            <span class="text-xs opacity-80" id="weather-date">--/--</span>
-                        </div>
-                        <div class="flex items-end gap-2">
-                            <span class="text-3xl font-black" id="weather-temp">--°C</span>
-                            <span class="text-sm font-medium opacity-90 mb-1" id="weather-desc">請稍候</span>
-                        </div>
-                    </div>
-                    <div class="text-4xl relative z-10" id="weather-icon">🌤️</div>
-                    
-                    <div class="absolute -right-4 -bottom-8 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
-                </div>
-            </div>
-
             <div id="itinerary-list" class="p-4 space-y-4"></div>
         </div>
 
@@ -188,9 +165,10 @@
 
                 <div id="settlement-details" class="space-y-3 text-sm">
                     <div class="bg-gray-50 p-3 rounded-lg text-xs text-gray-500 mb-2">
-                        <p>💡 負數(<span class="text-green-600 font-bold">綠色</span>)代表代墊太多，應拿回；正數(<span class="text-rose-500 font-bold">紅色</span>)代表應支付。</p>
+                        <p>💡 負數(<span class="text-green-600 font-bold">綠色</span>)代表此人代墊太多，應拿回款項；正數(<span class="text-rose-500 font-bold">紅色</span>)代表應支付款項。</p>
                     </div>
-                    <div class="space-y-3" id="split-result-list"></div>
+                    <div class="space-y-3" id="split-result-list">
+                        </div>
                 </div>
             </div>
 
@@ -289,16 +267,66 @@
 
         const DATA = {
             shopping: [
-                { name: "金龍綠豆糕", image: "金龍綠豆糕.jpg", desc: "綠豆糕是知名的越南特產之一，口感綿密，適合搭配茶點。", highlight: "經典特產" },
-                { name: "白虎活絡膏", image: "白虎活絡膏.jpg", desc: "知名的止痛膏，可以緩解腰痠背痛、關節痛、消腫等。", highlight: "藥局必買" },
-                { name: "帶皮腰果", image: "帶皮腰果.jpg", desc: "越大顆越貴。導遊特別交代盡量買「帶皮的」。", highlight: "導遊推薦" },
-                { name: "Vinamit 綜合果乾", image: "Vinamit的香蕉乾.jpg", desc: "越南水果非常甜，且 Vinamit 多使用天然糖漿醃製。", highlight: "天然零食" },
-                { name: "Ohla 芒果乾", image: "Ohla 芒果乾.jpg", desc: "口感厚實Q彈，保留了芒果的天然香氣與甜味。", highlight: "人氣推薦" },
-                { name: "Haohao 泡麵", image: "Haohao泡麵.jpg", desc: "CP值超高！藍色包裝(蒜香排骨)；粉色包裝(酸辣蝦)。", highlight: "超市掃貨" },
-                { name: "MAROU 巧克力", image: "MAROU巧克力.jpg", desc: "越南最有名的精品巧克力，採用當地優質可可豆。", highlight: "精品等級" },
-                { name: "越南河粉泡麵 (Vifon)", image: "越南河粉泡麵.jpg", desc: "推薦 Vifon 等品牌的即食河粉 (Pho)。", highlight: "還原度高" },
-                { name: "西寧蝦鹽 (Muối Tôm)", image: "蝦鹽.jpg", desc: "越南南部料理的靈魂！蘸水果、炸物都好吃。", highlight: "獨特調味" },
-                { name: "手工編織包", image: "編織包.jpg", desc: "越南市集常見，輕盈、堅固又實用，價格親民。", highlight: "高CP值" }
+                { 
+                    name: "金龍綠豆糕", 
+                    image: "金龍綠豆糕.jpg",
+                    desc: "綠豆糕是知名的越南特產之一，口感綿密，適合搭配茶點。", 
+                    highlight: "經典特產" 
+                },
+                { 
+                    name: "白虎活絡膏", 
+                    image: "白虎活絡膏.jpg",
+                    desc: "知名的止痛膏，可以緩解腰痠背痛、關節痛、消腫等，是長輩最愛的伴手禮。", 
+                    highlight: "藥局必買" 
+                },
+                { 
+                    name: "帶皮腰果", 
+                    image: "帶皮腰果.jpg",
+                    desc: "越大顆越貴。導遊特別交代盡量買「帶皮的」，因為去皮為了保存可能會浸藥水，帶皮的較天然且香氣更足。", 
+                    highlight: "導遊推薦" 
+                },
+                { 
+                    name: "Vinamit 香蕉乾/綜合果乾", 
+                    image: "Vinamit的香蕉乾.jpg",
+                    desc: "越南水果非常甜，且 Vinamit 多使用天然糖漿醃製，不含化學添加物。口味豐富如波羅蜜、荔枝、芒果等。\n價格親民 (一包約 NTD 35)，是便宜又好吃的必買零食。", 
+                    highlight: "天然零食" 
+                },
+                { 
+                    name: "Ohla 芒果乾", 
+                    image: "Ohla 芒果乾.jpg",
+                    desc: "口感厚實Q彈，保留了芒果的天然香氣與甜味，是近年來非常熱門的伴手禮選擇。", 
+                    highlight: "人氣推薦" 
+                },
+                { 
+                    name: "Haohao 泡麵", 
+                    image: "Haohao泡麵.jpg",
+                    desc: "CP值超高！\n🔵 藍色包裝 (蒜香排骨)：台灣人最愛，但它是豬肉口味。\n🔴 粉色包裝 (酸辣蝦)：當地人最愛，類似來一客海鮮口味的加強版。", 
+                    highlight: "超市掃貨" 
+                },
+                { 
+                    name: "MAROU 巧克力", 
+                    image: "MAROU巧克力.jpg",
+                    desc: "越南最有名的精品巧克力，採用當地優質可可豆，被《紐約時報》譽為「最棒的巧克力」。包裝精美，適合送禮。", 
+                    highlight: "精品等級" 
+                },
+                { 
+                    name: "越南河粉泡麵 (Vifon)", 
+                    image: "越南河粉泡麵.jpg",
+                    desc: "想把越南河粉帶回台灣？推薦 Vifon 等品牌的即食河粉 (Pho)，湯頭還原度高，有雞肉或牛肉口味，送禮自用兩相宜。", 
+                    highlight: "還原度高" 
+                },
+                { 
+                    name: "西寧蝦鹽 (Muối Tôm)", 
+                    image: "蝦鹽.jpg",
+                    desc: "越南南部料理的靈魂！由鹽和乾燥蝦粉混合。質地細膩，帶有濃郁蝦香。\n💡 用法：蘸水果 (青芒果、鳳梨)、炸物、燒烤，能大幅提升風味層次。", 
+                    highlight: "獨特調味" 
+                },
+                { 
+                    name: "手工編織包", 
+                    image: "編織包.jpg",
+                    desc: "越南市集常見，編織技術精湛，搭配流蘇等裝飾。輕盈、堅固又實用，價格親民 (約 NTD 200 起)，質感不輸精品，是絕佳的穿搭配件。", 
+                    highlight: "高CP值" 
+                }
             ],
             flights: [
                 { type: "去程", date: "1/29 (四)", airline: "台灣虎航 IT 551", time: "17:25 - 19:10", from: "桃園機場 (T1)", to: "峴港機場", note: "有供餐。\n起飛前 48h-60m 需網路報到" },
@@ -317,16 +345,6 @@
                 { day: 6, date: "2/3 (二)", title: "美山聖地 & 古城" },
                 { day: 7, date: "2/4 (三)", title: "返程" }
             ],
-            // 座標設定 (緯度, 經度)
-            weatherConfig: {
-                1: { name: "峴港", lat: 16.0544, lon: 108.2022, date: "2026-01-29" },
-                2: { name: "巴拿山 (山區)", lat: 15.996, lon: 107.994, date: "2026-01-30" }, // 山區座標
-                3: { name: "峴港", lat: 16.0544, lon: 108.2022, date: "2026-01-31" },
-                4: { name: "順化", lat: 16.4637, lon: 107.595, date: "2026-02-01" },
-                5: { name: "會安", lat: 15.880, lon: 108.333, date: "2026-02-02" },
-                6: { name: "會安", lat: 15.880, lon: 108.333, date: "2026-02-03" },
-                7: { name: "峴港", lat: 16.0544, lon: 108.2022, date: "2026-02-04" }
-            },
             // charter: 標記該項目是否在包車範圍內
             activities: [
                 // Day 1
@@ -337,25 +355,83 @@
                 { dayId: 1, time: "20:30", title: "🏨 Check-in", desc: "<a href='https://www.google.com/maps/search/?api=1&query=Cozy+Danang+Boutique+Hotel' target='_blank'>Cozy Danang Boutique Hotel</a>\n放置行李。", type: "hotel", map: "Cozy Danang Boutique Hotel" },
                 { dayId: 1, time: "21:00", title: "🍜 晚餐：功夫麵", desc: "<a href='https://www.google.com/maps/search/?api=1&query=Kungfu+Noodle+Restaurant+Danang' target='_blank'>Kungfu Noodle Restaurant</a> (營業至 21:30)。\n網友推薦：牛肉麵、廣南麵 (平價好吃)。", type: "food", map: "Kungfu Noodle Restaurant" },
                 { dayId: 1, time: "22:00", title: "🛌 回飯店休息", desc: "<a href='https://www.google.com/maps/search/?api=1&query=Cozy+Danang+Boutique+Hotel' target='_blank'>Cozy Danang Boutique Hotel</a>。", type: "hotel" },
-                // ... (其餘行程省略以節省篇幅，程式碼結構不變) ...
-                // 為了不讓代碼過長被截斷，請保留原本的行程資料 activities [...]
+                
+                // Day 2
+                { dayId: 2, time: "07:00", title: "🥣 早餐：飯店", desc: "飯店早餐 (供應時間 06:30-10:00)。", type: "food" },
+                { dayId: 2, time: "07:30", title: "🚌 前往巴拿山", desc: "KKday 接送 (請在飯店大廳等候)。\n⚠️ 重要：山上氣溫低 5-10 度，務必帶外套和雨具。", type: "transport", tag: "KKday 接送", important: true },
+                { dayId: 2, time: "08:30", title: "🚠 纜車 & 黃金佛手橋", desc: "搭乘纜車上山。\n參觀：佛手橋、愛情花園、黛貝酒窖。", type: "activity", map: "Golden Bridge Da Nang" },
+                { dayId: 2, time: "12:30", title: "🍔 午餐：山上小吃", desc: "建議在山上攤販或 Buffet 解決。\n(連結為地圖位置)", type: "food", map: "Ba Na Hills Sun World" },
+                { dayId: 2, time: "14:00", title: "🏰 法國村 & 樂園", desc: "遊覽法國村拍照。\nFantasy Park：室內遊樂園，過山車 (約 124 TWD)。", type: "activity" },
+                { dayId: 2, time: "16:30", title: "🚌 下山 & 返回市區", desc: "搭纜車下山，搭乘接送車返回峴港市區。", type: "transport", tag: "KKday 接送" },
+                { dayId: 2, time: "18:30", title: "💰 補換匯", desc: "前往漢市場周邊銀樓補換越南盾。", type: "activity", map: "Han Market Gold Shop" },
+                { dayId: 2, time: "19:00", title: "🦞 晚餐：韓江畔/海鮮", desc: "建議：韓江邊餐廳用餐 (景觀或海鮮)。\n餐後可步行至龍橋。", type: "food" },
+                { dayId: 2, time: "20:30", title: "🐉 龍橋噴火秀", desc: "⚠️ 噴火時間約 15 分鐘。\n記得站在「逆風處」避免被水噴濕。", type: "activity", important: true, map: "Dragon Bridge Da Nang" },
+                { dayId: 2, time: "21:30", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel。", type: "hotel" },
+
+                // Day 3
+                { dayId: 3, time: "08:00", title: "🥣 早餐：飯店", desc: "飯店早餐。", type: "food" },
+                { dayId: 3, time: "09:00", title: "🚗 前往五行山", desc: "叫車前往水山電梯售票口。", type: "transport", tag: "Grab 七人座" },
+                { dayId: 3, time: "09:30", title: "⛰️ 五行山", desc: "建議：電梯上山，走下山 (約10min)。\n參觀靈應寺、玄空洞。", type: "activity", map: "Marble Mountains" },
+                { dayId: 3, time: "12:00", title: "🥢 午餐：Thìa Gỗ", desc: "米其林推薦越南料理 (營業 10:00-22:00)。", type: "food", map: "Thìa Gỗ Da Nang" },
+                { dayId: 3, time: "14:00", title: "🛍️ 漢市場 & 粉紅教堂", desc: "漢市場 (Han Market)：\n1F 伴手禮/乾貨，2F 衣服鞋子。\n周邊金飾店可補換匯。", type: "shopping", map: "Han Market" },
+                { 
+                  dayId: 3, 
+                  time: "17:00", 
+                  title: "🦞 晚餐：All Seasons", 
+                  desc: "All Seasons Buffet Da Nang。\n⚠️ 已預訂 5 位龍蝦吃到飽，現場付費 (<a href='https://github.com/Wantinghsu/vngo/blob/main/lobster.png?raw=true' target='_blank'>訂位照片</a>)。\n(850k VND++/人，不含稅與飲品)。", 
+                  type: "food", 
+                  important: true, 
+                  map: "All Seasons Restaurant" 
+                },
+                { dayId: 3, time: "20:00", title: "💆‍♀️ 按摩 SPA", desc: "Hương Tràm Spa (可預約)。\n或在美溪沙灘周邊散步。", type: "activity", map: "Hương Tràm Spa Da Nang" },
+                { dayId: 3, time: "22:00", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel。", type: "hotel" },
+
+                // Day 4
+                { dayId: 4, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐，吃飽準備長途車程。", type: "food" },
+                { dayId: 4, time: "09:00", title: "🚗 前往順化 (包車)", desc: "KLOOK 包車 12小時。\n途經：海雲關隘口、陵姑灣 (人生必去50景點)。", type: "transport", tag: "KLOOK 包車 (12小時)", charter: true, map: "Hai Van Pass" },
+                { dayId: 4, time: "11:30", title: "🍜 午餐：順化料理", desc: "推薦：Madame Thu 或 Quan Hanh。\n必吃：順化牛肉粉 (Bun Bo Hue)、浮萍餅。", type: "food", charter: true, map: "Madame Thu Restaurant - Hue" },
+                { dayId: 4, time: "12:30", title: "🏯 順化皇城", desc: "越南縮小版紫禁城，參觀約 2H。", type: "activity", charter: true, map: "Hue Imperial City" },
+                { dayId: 4, time: "15:00", title: "🏛️ 啟定皇陵 / 天姥寺", desc: "主行程：啟定皇陵 (融合東西方建築)。\n備案：天姥寺 (Thien Mu Pagoda) 若時間充裕可去。", type: "activity", charter: true, map: "Tomb of Khai Dinh" },
+                { dayId: 4, time: "16:00", title: "🚗 返回峴港", desc: "車程約 2 小時，經海雲隧道返回。", type: "transport", charter: true },
+                { dayId: 4, time: "18:00", title: "🍢 晚餐：山茶夜市", desc: "烤龍蝦、海鮮盤、越式煎餅。\n⚠️ 備註：若擔心海鮮不新鮮，可純逛街，吃別的。", type: "food", map: "Son Tra Night Market" },
+                { dayId: 4, time: "20:30", title: "🐉 龍橋噴火 (備案)", desc: "每週五、六、日 21:00 噴火。\n若 Day 2 沒看到，今晚可補看。", type: "activity", important: true },
+                { dayId: 4, time: "22:00", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel (最後一晚)。", type: "hotel" },
+
+                // Day 5
+                { dayId: 5, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐。\n用餐後整理行李退房。", type: "food" },
+                { dayId: 5, time: "09:00", title: "🚗 前往迦南島", desc: "帶著行李移動，包車前往。", type: "transport", tag: "KLOOK 包車 (4小時)", charter: true },
+                { dayId: 5, time: "10:00", title: "🥥 迦南島竹籃船", desc: "體驗傳統桶船旋轉表演 (約1小時)。\n⚠️ 船夫小費約 20,000-50,000 VND。", type: "activity", important: true, charter: true },
+                { dayId: 5, time: "11:00", title: "🍲 午餐：Nhà hàng Bông Dừa", desc: "Bông Dừa Restaurant。\n特色：海鮮火鍋、烤蝦、炒空心菜。", type: "food", charter: true, map: "Nhà hàng Bông Dừa Hoi An" },
+                { dayId: 5, time: "12:30", title: "🏨 前往會安 & Check-in", desc: "包車結束，前往 Lantana Boutique Hoi An Hotel 放行李。", type: "hotel", charter: true, map: "Lantana Boutique Hoi An Hotel" },
+                { dayId: 5, time: "13:00", title: "🏮 會安古城漫遊", desc: "景點：日本橋、福建會館。\n下午茶：Mot Hoi An (荷花茶)、Faifo Coffee (頂樓景)。", type: "activity", map: "Hoi An Ancient Town" },
+                { dayId: 5, time: "16:00", title: "🎡 前往會安印象樂園", desc: "16:00入園(KKDAY換票)\n\n《詳細活動流程》\n16:30 - 17:30｜園區漫步 & 觀賞迎賓秀 (Mini Shows)：迎親隊伍、古代商貿場景\n17:30 - 18:45｜晚餐：Nón Lá (斗笠) 餐廳自助餐\n18:45 - 19:30｜夜景 & 特色小秀（街道後段有 《玉華公主大婚》、《比武招親》）\n19:30 - 19:50｜前往劇場 & VIP 尊榮入場 ：詢問工作人員 \"VIP Elevator\"\n20:00 - 21:00｜《會安回憶》實景秀 (Main Show)\n\n⚠️ 散場技巧：VIP 離場通常也比較快（有獨立通道）。走出劇場後，建議快速通過橋，走到園區大門外的馬路邊。打開 Grab 定位在 \"Hoi An Impression Theme Park Gate\"。", type: "activity" },
+                { dayId: 5, time: "21:30", title: "🛌 回飯店休息", desc: "Lantana Boutique Hoi An Hotel。", type: "hotel" },
+
+                // Day 6
+                { dayId: 6, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐。", type: "food" },
+                { dayId: 6, time: "09:00", title: "🚗 前往美山聖地", desc: "車程約 1 小時。", type: "transport", tag: "KLOOK 包車 (4小時)", charter: true },
+                { dayId: 6, time: "10:00", title: "🛕 美山聖地", desc: "參觀占婆王國遺址 (小吳哥窟)。\n有接駁車與舞蹈表演。", type: "activity", map: "My Son Sanctuary", charter: true },
+                { dayId: 6, time: "12:00", title: "🚗 返回會安", desc: "搭車返回會安市區 (約1小時)。", type: "transport", charter: true },
+                { dayId: 6, time: "13:00", title: "🛍️ 古城逛街 & 下午茶", desc: "逛街、午餐、越式下午茶。\n推薦：\n1. Faifo Coffee (頂樓可拍到古鎮屋頂全景)\n2. Mót Hoi An (必喝的蓮花藥草茶)", type: "shopping", map: "Faifo Coffee" },
+                { dayId: 6, time: "17:00", title: "🥢 晚餐：經典越式", desc: "Morning Glory 或 Miss Ly。\n必點會安三寶：\n1. 白玫瑰 (White Rose)\n2. 炸雲吞\n3. 高樓麵 (Cao Lau)", type: "food", map: "Morning Glory Original" },
+                { dayId: 6, time: "18:30", title: "🕯️ 秋盆河放水燈", desc: "走到安會橋 (An Hoi Bridge)，搭乘舢舨船體驗放水燈 (Lantern Release)。", type: "activity", map: "An Hoi Bridge" },
+                { dayId: 6, time: "19:30", title: "🏮 會安夜市", desc: "燈籠街、手工藝品、竹編包。\n街頭小吃推薦：香蕉煎餅、烤肉串。", type: "shopping", map: "Hoi An Night Market" },
+                { dayId: 6, time: "21:00", title: "🛌 回飯店休息", desc: "Lantana Boutique Hoi An Hotel。", type: "hotel" },
+
+                // Day 7
+                { dayId: 7, time: "06:30", title: "🥣 早餐：飯店", desc: "飯店簡易早餐 / 辦理退房。", type: "food" },
+                { dayId: 7, time: "07:00", title: "🚌 前往峴港機場", desc: "從會安出發，預留車程時間。\n(KKday 接送)", type: "transport", tag: "KKday 接送" },
+                { dayId: 7, time: "08:00", title: "🛫 機場報到", desc: "辦理登機、最後免稅店採買。", type: "activity" },
+                { dayId: 7, time: "10:20", title: "✈️ 飛機返程", desc: "華航 CI788 (峴港 T2 -> 桃園 T1)。\n14:05 抵達台灣。", type: "flight" }
             ]
         };
-        
-        // 補回原本 activities 完整資料 (這裡只是一個標記，請確保您貼上的代碼包含 activities 的完整內容)
-        // 您可以把上面的 activities: [...] 內容全部保留，我沒有動到那邊的資料結構，除了新增 weatherConfig。
-        // 請確保複製時 activities 裡的資料是完整的。
 
         // --- Logic ---
         let currentDayId = 1;
-        let exchangeRate = 770; 
+        let exchangeRate = 770; // 預設匯率
 
         window.addEventListener('DOMContentLoaded', () => {
             try {
-                // 如果 activities 被簡化了，請記得把原本的貼回來
-                // 這裡為了演示，我假設 DATA.activities 已經包含您原本的資料
-                // 若沒有，請手動補上
-                
                 renderDaySelector();
                 renderItinerary(currentDayId);
                 renderFlights();
@@ -363,7 +439,10 @@
                 renderMustBuy(); 
                 document.getElementById('loading-msg').style.display = 'none';
                 
+                // 設定日期預設為今天
                 document.getElementById('acc-date').valueAsDate = new Date();
+
+                // 初始化匯率
                 fetchExchangeRate();
             } catch (err) {
                 document.getElementById('loading-msg').innerHTML = `<span class="text-red-500">Error: ${err.message}</span>`;
@@ -380,7 +459,10 @@
             document.getElementById(`btn-${tabName}`).classList.remove('text-gray-400');
             document.getElementById(`btn-${tabName}`).classList.add('text-teal-600');
 
-            if(tabName === 'accounting') fetchExpenses();
+            // 如果切換到分帳頁面，自動讀取最新帳目
+            if(tabName === 'accounting') {
+                fetchExpenses();
+            }
         }
 
         function selectDay(dayId) {
@@ -403,12 +485,9 @@
         }
 
         function renderItinerary(dayId) {
-            // 1. 渲染列表
             const list = document.getElementById('itinerary-list');
             const dayData = DATA.days.find(d => d.day === dayId);
-            // 注意：這裡假設 DATA.activities 是完整的。如果上面被簡化了，請務必補回原本的資料。
-            // 為了避免錯誤，我會在這裡檢查，如果 DATA.activities 是空的(或不完整)，請自行補上。
-            const items = DATA.activities ? DATA.activities.filter(a => a.dayId === dayId) : []; 
+            const items = DATA.activities.filter(a => a.dayId === dayId);
 
             let html = `
                 <div class="mb-4 px-1">
@@ -418,29 +497,43 @@
             `;
 
             if (items.length === 0) {
-                // 如果 items 為空，可能是資料沒貼完整
-                // html += `<div class="p-8 text-center text-gray-400">...</div>`; 
+                html += `<div class="p-8 text-center text-gray-400 bg-white rounded-xl border border-dashed border-gray-300">本日無特定行程</div>`;
             } else {
                 html += items.map((item, index) => {
                     const isLast = index === items.length - 1;
                     const typeColor = getTypeColor(item.type);
                     const typeIcon = getTypeIcon(item.type);
                     const transportBadge = item.tag ? `<div class="bg-blue-50 px-3 py-1.5 border-b border-blue-100 flex items-center gap-1 text-xs font-bold text-blue-700">${item.tag}</div>` : '';
+                    
                     const charterClass = item.charter ? 'border-2 border-l-4 border-blue-200 bg-blue-50/20' : '';
-                    const mapBtn = item.map ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}" target="_blank" onclick="event.stopPropagation()" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:text-teal-600 hover:bg-teal-50 transition-colors shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></a>` : '';
+                    const importantStyle = ''; 
+                    const finalStyle = item.charter ? charterClass : importantStyle;
+
+                    const mapBtn = item.map ? `
+                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}" target="_blank" onclick="event.stopPropagation()" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:text-teal-600 hover:bg-teal-50 transition-colors shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </a>
+                    ` : '';
                     
                     const needToggle = item.desc.length > 30; 
-                    const toggleIndicator = needToggle ? `<div class="text-xs text-gray-400 mt-2 flex items-center gap-1 opacity-70"><svg class="w-3 h-3 transition-transform duration-300 toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg><span class="toggle-text">展開詳情</span></div>` : '';
+                    const toggleIndicator = needToggle ? `
+                        <div class="text-xs text-gray-400 mt-2 flex items-center gap-1 opacity-70">
+                            <svg class="w-3 h-3 transition-transform duration-300 toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <span class="toggle-text">展開詳情</span>
+                        </div>
+                    ` : '';
 
                     return `
                     <div class="relative pl-4">
                         ${!isLast ? '<div class="timeline-line"></div>' : ''}
-                        <div class="relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-5 transition-all active:scale-[0.99] ${charterClass}">
+                        <div class="relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-5 transition-all active:scale-[0.99] ${finalStyle}">
                             ${transportBadge}
                             <div class="p-4 flex gap-4" onclick="toggleDesc(this)">
                                 <div class="flex flex-col items-center gap-1 min-w-[3.5rem] pt-1">
                                     <span class="text-sm font-black text-gray-700 tracking-tight">${item.time}</span>
-                                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-md z-10" style="background-color: ${typeColor}">${typeIcon}</div>
+                                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-md z-10" style="background-color: ${typeColor}">
+                                        ${typeIcon}
+                                    </div>
                                 </div>
                                 <div class="flex-1 min-w-0 pt-1">
                                     <div class="flex justify-between items-start">
@@ -455,139 +548,472 @@
                                 </div>
                             </div>
                         </div>
-                    </div>`;
+                    </div>
+                    `;
                 }).join('');
             }
             list.innerHTML = html;
-
-            // 2. 更新天氣 (核心功能)
-            updateWeather(dayId);
         }
 
-        // === 天氣功能 Start ===
-        async function updateWeather(dayId) {
-            const config = DATA.weatherConfig[dayId];
-            const widget = document.getElementById('weather-widget');
-            
-            // UI 重置為載入中
-            document.getElementById('weather-location').innerText = config.name;
-            document.getElementById('weather-date').innerText = config.date.slice(5).replace('-', '/');
-            document.getElementById('weather-temp').innerText = "--°C";
-            document.getElementById('weather-desc').innerText = "載入中...";
-            widget.classList.add('weather-loading');
+        // 渲染必買清單
+        function renderMustBuy() {
+            const container = document.getElementById('mustbuy-list');
+            container.innerHTML = DATA.shopping.map(item => `
+                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    ${item.image ? `<div class="mb-3 rounded-lg overflow-hidden h-48 bg-gray-100 relative">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" loading="lazy">
+                    </div>` : ''}
 
-            try {
-                // Open-Meteo API (免費，無需 Key)
-                // 判斷日期是否太遠 (超過14天)
-                const targetDate = new Date(config.date);
-                const today = new Date();
-                const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
-                
-                let url = "";
-                // 如果日期是未來14天內，用 forecast
-                // 如果是更久以後，API 會失敗，這裡做個簡單防呆：
-                // 如果超過範圍，就抓「今天」的天氣當參考，並標註 (預報)
-                if (diffDays > 14 || diffDays < -2) {
-                     // 超出範圍，顯示當下天氣作為參考
-                     url = `https://api.open-meteo.com/v1/forecast?latitude=${config.lat}&longitude=${config.lon}&current=temperature_2m,weather_code&timezone=auto`;
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-bold text-teal-800">${item.name}</h3>
+                        <span class="bg-rose-100 text-rose-600 text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap ml-2">${item.highlight}</span>
+                    </div>
+                    <div class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">${item.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderFlights() {
+            const container = document.getElementById('view-flights');
+            container.innerHTML = DATA.flights.map(f => `
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 relative overflow-hidden mb-4">
+                    <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs px-3 py-1 rounded-bl-lg font-bold">${f.type}</div>
+                    <div class="text-xs text-gray-500 font-bold mb-2">${f.date}</div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-center">
+                            <div class="text-3xl font-black text-gray-800">${f.time.split('-')[0].trim()}</div>
+                            <div class="text-xs text-gray-500 mt-1">${f.from}</div>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center px-4">
+                             <div class="text-xs text-blue-600 font-bold mb-1">${f.airline}</div>
+                             <div class="w-full h-[1px] bg-gray-300 relative flex items-center justify-center"></div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-black text-gray-800">${f.time.split('-')[1].trim()}</div>
+                            <div class="text-xs text-gray-500 mt-1">${f.to}</div>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg text-xs text-blue-800 border border-blue-100">${f.note}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderHotels() {
+            const container = document.getElementById('view-hotels');
+            container.innerHTML = DATA.hotels.map(h => `
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded">${h.location}</span>
+                        <span class="text-xs text-gray-400 font-medium">${h.dates}</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2 leading-tight">${h.name}</h3>
+                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-4 bg-gray-50 p-2 rounded w-fit">
+                        <span>In ${h.checkIn} / Out ${h.checkOut}</span>
+                    </div>
+                    <div class="text-sm text-gray-600 p-3 rounded border border-gray-100 mb-4 whitespace-pre-wrap leading-relaxed">${h.note}</div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="${h.mapLink}" target="_blank" class="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-medium transition-colors">📍 地圖</a>
+                        <button onclick="copyText('${h.name}')" class="flex items-center justify-center gap-2 bg-purple-50 hover:bg-purple-100 text-purple-700 py-3 rounded-xl text-sm font-medium transition-colors">📋 複製</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleDesc(el) {
+            const desc = el.querySelector('.desc-text');
+            const icon = el.querySelector('.toggle-icon');
+            const text = el.querySelector('.toggle-text');
+            if(desc) {
+                desc.classList.toggle('expanded');
+                if (desc.classList.contains('expanded')) {
+                    if(icon) icon.style.transform = 'rotate(180deg)';
+                    if(text) text.innerText = '收起';
                 } else {
-                     // 正常預報
-                     url = `https://api.open-meteo.com/v1/forecast?latitude=${config.lat}&longitude=${config.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&start_date=${config.date}&end_date=${config.date}`;
+                    if(icon) icon.style.transform = 'rotate(0deg)';
+                    if(text) text.innerText = '展開詳情';
                 }
-
-                const res = await fetch(url);
-                const data = await res.json();
-
-                widget.classList.remove('weather-loading');
-
-                if (data.daily) {
-                    // 預報資料
-                    const daily = data.daily;
-                    const max = Math.round(daily.temperature_2m_max[0]);
-                    const min = Math.round(daily.temperature_2m_min[0]);
-                    const code = daily.weather_code[0];
-                    const rain = daily.precipitation_probability_max[0];
-
-                    document.getElementById('weather-temp').innerText = `${min}°-${max}°`;
-                    document.getElementById('weather-desc').innerText = rain > 30 ? `降雨機率 ${rain}%` : getWeatherDesc(code);
-                    document.getElementById('weather-icon').innerText = getWeatherIcon(code);
-                } else if (data.current) {
-                    // fallback 到當前天氣
-                    const current = data.current;
-                    document.getElementById('weather-temp').innerText = `${Math.round(current.temperature_2m)}°C`;
-                    document.getElementById('weather-desc').innerText = "即時氣溫 (預報未出)";
-                    document.getElementById('weather-icon').innerText = getWeatherIcon(current.weather_code);
-                }
-
-            } catch (e) {
-                console.error(e);
-                document.getElementById('weather-desc').innerText = "暫無資料";
-                widget.classList.remove('weather-loading');
             }
         }
 
-        function getWeatherIcon(code) {
-            // WMO Weather Codes 轉換 Emoji
-            if (code === 0) return "☀️";
-            if (code <= 3) return "⛅";
-            if (code <= 48) return "🌫️";
-            if (code <= 67) return "🌧️"; // Rain
-            if (code <= 77) return "❄️";
-            if (code <= 82) return "🌦️"; // Showers
-            if (code <= 99) return "⚡"; // Thunderstorm
-            return "🌡️";
+        function copyText(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('已複製: ' + text);
+            } catch (err) {
+                alert('複製失敗');
+            }
+            document.body.removeChild(textArea);
         }
-        
-        function getWeatherDesc(code) {
-            if (code === 0) return "晴朗";
-            if (code <= 3) return "多雲";
-            if (code <= 48) return "起霧";
-            if (code <= 67) return "有雨"; 
-            if (code <= 82) return "陣雨"; 
-            if (code <= 99) return "雷雨"; 
-            return "舒適";
+
+        function getTypeColor(type) {
+            switch(type) {
+                case 'transport': return '#3b82f6';
+                case 'flight': return '#2563eb';
+                case 'hotel': return '#a855f7';
+                case 'food': return '#f97316';
+                case 'shopping': return '#ec4899';
+                default: return '#10b981';
+            }
         }
-        // === 天氣功能 End ===
 
-        // ... (以下為原本的記帳、渲染函數，請保持原樣) ...
-        // 請確保以下的 renderHotels, renderMustBuy, toggleDesc, copyText, fetchExpenses, submitExpense 等函數都還在
-        // 為了節省篇幅，我這邊不重複貼上，請保留您上一版完整的 script 內容
-        // 只要把 activities 資料補齊 + 把上面的 weatherConfig 設定好 + 加入 updateWeather 相關函數即可。
-        
-        // 為了方便您直接複製，我將 "被省略" 的部分函數補上最關鍵的 fetchExpenses 和 submitExpense
-        // 但請注意 activities 的內容務必是完整的 Day 1 ~ Day 7
-        
-        // (此處省略了 renderHotels, renderMustBuy 等視覺渲染函數，因邏輯無變動)
-        // (此處省略了 fetchExpenses, submitExpense, deleteExpense, editExpense 等後端串接函數，因邏輯無變動)
-        
-        // 建議：將上一版的 <script> 內容完整保留，只做以下兩個修改：
-        // 1. 在 DATA 物件中加入 weatherConfig (如上)
-        // 2. 在 renderItinerary 函數最後加入 updateWeather(dayId); 呼叫
-        // 3. 在 <script> 尾端補上 updateWeather, getWeatherIcon, getWeatherDesc 這三個函數。
-    </script>
-    
-    <script>
-        // ... (請將這段 script 內容替換掉上面簡略版) ...
-        // 由於篇幅限制，請將上一版完整的 Script 複製下來，並做以下插入：
-        
-        /* 在 const DATA = { ... } 裡面加入：
-           weatherConfig: {
-                1: { name: "峴港", lat: 16.0544, lon: 108.2022, date: "2026-01-29" },
-                2: { name: "巴拿山 (山區)", lat: 15.996, lon: 107.994, date: "2026-01-30" },
-                3: { name: "峴港", lat: 16.0544, lon: 108.2022, date: "2026-01-31" },
-                4: { name: "順化", lat: 16.4637, lon: 107.595, date: "2026-02-01" },
-                5: { name: "會安", lat: 15.880, lon: 108.333, date: "2026-02-02" },
-                6: { name: "會安", lat: 15.880, lon: 108.333, date: "2026-02-03" },
-                7: { name: "峴港", lat: 16.0544, lon: 108.2022, date: "2026-02-04" }
-           },
-        */
+        function getTypeIcon(type) {
+            const icons = {
+                transport: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>',
+                flight: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>',
+                hotel: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zm-6-4a2 2 0 110-4 2 2 0 010 4zm6-10a2 2 0 110-4 2 2 0 010 4zm-6 4a2 2 0 110-4 2 2 0 010 4z"></path></svg>',
+                food: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>', 
+                shopping: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>',
+                activity: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>'
+            };
+            return icons[type] || icons.activity;
+        }
 
-        /* 在 renderItinerary(dayId) 函數的最後一行 (list.innerHTML = html; 之後) 加入：
-           updateWeather(dayId);
-        */
+        // ==========================
+        // 匯率計算機邏輯
+        // ==========================
+        const vndInput = document.getElementById('input-vnd');
+        const twdInput = document.getElementById('input-twd');
+        const rateDisplay = document.getElementById('display-rate');
+        const statusBadge = document.getElementById('rate-status');
 
-       /* 在 script 最下方加入 updateWeather 等三個函數。
-       */
+        function toggleCalc() {
+            const modal = document.getElementById('calc-modal');
+            if (modal.classList.contains('hidden-modal')) {
+                modal.classList.remove('hidden-modal');
+                modal.classList.add('show-modal');
+            } else {
+                modal.classList.remove('show-modal');
+                modal.classList.add('hidden-modal');
+            }
+        }
+
+        async function fetchExchangeRate() {
+            try {
+                // 使用免費 API 獲取 TWD 匯率
+                const res = await fetch('https://api.exchangerate-api.com/v4/latest/TWD');
+                const data = await res.json();
+                
+                if (data && data.rates && data.rates.VND) {
+                    exchangeRate = data.rates.VND;
+                    rateDisplay.innerText = Math.floor(exchangeRate); // 顯示整數
+                    statusBadge.innerText = "即時匯率";
+                    statusBadge.className = "text-[10px] bg-green-600 px-2 py-0.5 rounded-full font-normal";
+                    updateRateDisplay(); // 如果正在分帳頁面，順便更新提示
+                } else {
+                    throw new Error("No rate data");
+                }
+            } catch (e) {
+                console.log("使用預設匯率", e);
+                rateDisplay.innerText = exchangeRate;
+                statusBadge.innerText = "預設匯率";
+                statusBadge.className = "text-[10px] bg-gray-500 px-2 py-0.5 rounded-full font-normal";
+            }
+        }
+
+        // 監聽 VND 輸入 -> 換算 TWD
+        vndInput.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val)) {
+                // 修正：越南盾換回台幣是除法
+                twdInput.value = (val / exchangeRate).toFixed(1);
+            } else {
+                twdInput.value = '';
+            }
+        });
+
+        // 監聽 TWD 輸入 -> 換算 VND
+        twdInput.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val)) {
+                // 台幣換越南盾是乘法
+                vndInput.value = Math.floor(val * exchangeRate);
+            } else {
+                vndInput.value = '';
+            }
+        });
+
+        // ==========================
+        // 記帳 & GAS 串接邏輯
+        // ==========================
+        
+        function updateRateDisplay() {
+            const currency = document.getElementById('acc-currency').value;
+            const hint = document.getElementById('acc-rate-hint');
+            if (currency === 'TWD') {
+                hint.innerText = '以 1:1 計算';
+            } else {
+                hint.innerText = `當前匯率: 1 TWD ≈ ${Math.floor(exchangeRate)} VND`;
+            }
+        }
+
+        async function submitExpense(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-acc');
+            const originalText = btn.innerHTML;
+            
+            // 檢查是否已設定 URL
+            if(GAS_URL.includes("你的_GOOGLE")) {
+                alert("請先在程式碼中設定 GAS_URL！");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> 處理中...`;
+
+            const date = document.getElementById('acc-date').value;
+            const item = document.getElementById('acc-item').value;
+            const payer = document.getElementById('acc-payer').value;
+            const currency = document.getElementById('acc-currency').value;
+            const amount = document.getElementById('acc-amount').value;
+            const note = document.getElementById('acc-note').value;
+            const editRowId = document.getElementById('edit-row-id').value; // 取得編輯ID
+
+            // 判斷是「新增」還是「編輯」
+            const action = editRowId ? 'edit' : 'add';
+            const payload = {
+                action: action,
+                row: editRowId ? parseInt(editRowId) : null,
+                date: date,
+                item: item,
+                payer: payer,
+                currency: currency,
+                amount: amount,
+                rate: exchangeRate, // 傳送當下匯率
+                note: note
+            };
+
+            try {
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                // 成功後重置
+                resetFormState();
+                
+                alert(action === 'edit' ? '✅ 修改成功！' : `✅ 記帳成功！\n${item} (${currency} ${amount})`);
+                fetchExpenses(); // 重新整理列表
+
+            } catch (err) {
+                console.error(err);
+                alert("❌ 處理失敗，請檢查網路或 URL 設定");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        // 切換顯示結算區塊
+        function toggleSettlement() {
+            const detailBox = document.getElementById('settlement-details');
+            const arrow = document.getElementById('arrow-settlement');
+            
+            if (detailBox.classList.contains('open')) {
+                detailBox.classList.remove('open');
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                detailBox.classList.add('open');
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // === 刪除功能 ===
+        async function deleteExpense(rowId, itemName) {
+            if (!confirm(`⚠️ 確定要刪除「${itemName}」嗎？\n(這筆資料會從計算中移除)`)) {
+                return;
+            }
+
+            try {
+                // 顯示 loading 提示
+                const card = document.getElementById(`expense-card-${rowId}`);
+                if(card) card.style.opacity = '0.5';
+
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'delete',
+                        row: rowId
+                    })
+                });
+
+                alert('🗑️ 已刪除');
+                fetchExpenses(); 
+
+            } catch (err) {
+                console.error(err);
+                alert('❌ 刪除失敗，請檢查網路');
+                if(card) card.style.opacity = '1';
+            }
+        }
+
+        // === 編輯功能：將資料帶入表單 ===
+        function editExpense(data) {
+            // 帶入資料
+            document.getElementById('acc-date').value = data.date.replace(/\//g, '-');
+            document.getElementById('acc-item').value = data.item;
+            document.getElementById('acc-payer').value = data.payer;
+            document.getElementById('acc-currency').value = data.currency;
+            document.getElementById('acc-amount').value = data.amount;
+            document.getElementById('acc-note').value = data.note;
+            
+            // 設定編輯 ID
+            document.getElementById('edit-row-id').value = data.rowIndex;
+
+            // 改變介面狀態
+            document.getElementById('form-title').innerHTML = `✏️ 修改帳目 <span class="text-xs text-gray-400 font-normal">#${data.rowIndex}</span>`;
+            document.getElementById('btn-submit-acc').innerHTML = '確認更新';
+            document.getElementById('btn-submit-acc').classList.replace('bg-teal-600', 'bg-blue-600');
+            document.getElementById('btn-submit-acc').classList.replace('hover:bg-teal-700', 'hover:bg-blue-700');
+            document.getElementById('btn-cancel-edit').classList.remove('hidden'); // 顯示取消按鈕
+            
+            // 滾動到表單
+            document.getElementById('app-container').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // === 重置表單狀態 (回到新增模式) ===
+        function resetFormState() {
+            document.getElementById('account-form').reset();
+            document.getElementById('edit-row-id').value = ''; // 清空編輯ID
+            document.getElementById('acc-date').valueAsDate = new Date(); // 日期回歸今天
+
+            document.getElementById('form-title').innerHTML = '💸 新增一筆帳目';
+            document.getElementById('btn-submit-acc').innerHTML = '<span>記帳</span>';
+            document.getElementById('btn-submit-acc').classList.replace('bg-blue-600', 'bg-teal-600');
+            document.getElementById('btn-submit-acc').classList.replace('hover:bg-blue-700', 'hover:bg-teal-700');
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+        }
+
+        async function fetchExpenses() {
+            const listDiv = document.getElementById('expense-list');
+            const summaryCard = document.getElementById('expense-summary-card');
+            const totalEl = document.getElementById('total-expense');
+            const splitListEl = document.getElementById('split-result-list');
+            
+             if(GAS_URL.includes("你的_GOOGLE")) {
+                listDiv.innerHTML = `<div class="text-center text-red-400 p-4">請先設定 GAS_URL</div>`;
+                return;
+            }
+            
+            listDiv.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm animate-pulse">正在讀取雲端帳目...</div>`;
+
+            // 分帳比例設定
+            const SPLIT_RATIO = {
+                '榮': 0.1333,
+                '如': 0.1333,
+                '翔': 0.2667,
+                '庭': 0.2667,
+                '中': 0.20
+            };
+
+            // 紀錄每個人已付款金額 (墊付)
+            let PAID_TRACKER = {
+                '榮': 0, '如': 0, '翔': 0, '庭': 0, '中': 0
+            };
+
+            try {
+                const res = await fetch(GAS_URL);
+                const data = await res.json();
+                
+                if (data.length === 0) {
+                    listDiv.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm">目前沒有帳目</div>`;
+                    summaryCard.classList.add('hidden');
+                    return;
+                }
+
+                // 計算總金額 & 統計每人已付
+                let totalTWD = 0;
+                data.forEach(row => {
+                    const amount = parseInt(row.twd);
+                    if(!isNaN(amount)) {
+                        totalTWD += amount;
+                        if (PAID_TRACKER[row.payer] !== undefined) {
+                            PAID_TRACKER[row.payer] += amount;
+                        }
+                    }
+                });
+
+                // 更新總結算看板數字
+                totalEl.innerText = totalTWD.toLocaleString();
+                
+                // 計算結算
+                let splitHtml = '';
+                for (const [name, ratio] of Object.entries(SPLIT_RATIO)) {
+                    const shouldPay = Math.round(totalTWD * ratio); // 應付
+                    const hasPaid = PAID_TRACKER[name]; // 已付
+                    const balance = shouldPay - hasPaid; // 差額
+
+                    let balanceText = '';
+                    if (balance > 0) {
+                        balanceText = `<span class="text-rose-500 font-bold">需支付 $${balance.toLocaleString()}</span>`;
+                    } else if (balance < 0) {
+                        balanceText = `<span class="text-green-600 font-bold">應拿回 $${Math.abs(balance).toLocaleString()}</span>`;
+                    } else {
+                        balanceText = `<span class="text-gray-400">已結清</span>`;
+                    }
+
+                    splitHtml += `
+                        <div class="flex justify-between items-center bg-white p-2 rounded border border-gray-100">
+                            <div>
+                                <span class="font-bold text-gray-700 mr-2">${name}</span>
+                                <span class="text-[10px] text-gray-400">應付$${shouldPay.toLocaleString()} / 已付$${hasPaid.toLocaleString()}</span>
+                            </div>
+                            <div class="text-right text-sm">
+                                ${balanceText}
+                            </div>
+                        </div>
+                    `;
+                }
+                splitListEl.innerHTML = splitHtml;
+                summaryCard.classList.remove('hidden');
+
+                // 產生列表 HTML (加入編輯按鈕)
+                const html = data.map(row => {
+                    const isTWD = row.currency === 'TWD';
+                    const displayTime = row.date ? row.date.replace(/-/g, '/') : row.time; 
+                    
+                    // 將資料轉換為JSON字串，以便傳遞給編輯函數 (需處理單引號)
+                    const rowDataSafe = JSON.stringify(row).replace(/"/g, '&quot;');
+
+                    return `
+                        <div id="expense-card-${row.rowIndex}" class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex justify-between items-center relative group">
+                            <div>
+                                <div class="font-bold text-gray-800 text-sm">${row.item}</div>
+                                <div class="text-xs text-gray-500 mt-1 flex items-center gap-2">
+                                    <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600 font-medium">${row.payer}</span>
+                                    <span class="opacity-75">${displayTime}</span>
+                                </div>
+                                ${row.note ? `<div class="text-xs text-gray-400 mt-1">${row.note}</div>` : ''}
+                            </div>
+                            <div class="text-right flex flex-col items-end">
+                                <div class="font-bold text-teal-700 text-lg">$${parseInt(row.twd).toLocaleString()} <span class="text-[10px] text-gray-400 font-normal">TWD</span></div>
+                                ${!isTWD ? `<div class="text-xs text-gray-400 mb-1">${parseInt(row.amount).toLocaleString()} ${row.currency}</div>` : ''}
+                                
+                                <div class="flex gap-2 mt-1">
+                                    <button onclick="editExpense(${rowDataSafe})" class="text-xs text-blue-400 hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded transition-colors flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        修改
+                                    </button>
+                                    <button onclick="deleteExpense(${row.rowIndex}, '${row.item}')" class="text-xs text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded transition-colors flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        刪除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                listDiv.innerHTML = html;
+
+            } catch (err) {
+                console.error(err);
+                listDiv.innerHTML = `<div class="text-center text-red-400 py-4 text-sm">讀取失敗，請稍後再試</div>`;
+            }
+        }
     </script>
 </body>
 </html>
