@@ -100,7 +100,7 @@
         const DATA = {
             flights: [
                 { type: "去程", date: "1/29 (四)", airline: "台灣虎航 IT 551", time: "17:25 - 19:10", from: "桃園機場 (T1)", to: "峴港機場", note: "有供餐。\n起飛前 48h-60m 需網路報到" },
-                { type: "回程", date: "2/4 (三)", airline: "華航 CI 788", time: "10:20 - 14:05", from: "峴港機場 (T2)", to: "桃園機場 (T1)", note: "機型 Airbus A321neo" }
+                { type: "回程", date: "2/4 (三)", airline: "華航 CI 788", time: "10:20 - 14:05", from: "峴港機場 (T2)", to: "桃園機場 (T1)", note: "有供餐。\n機型 Airbus A321neo" }
             ],
             hotels: [
                 { name: "Cozy Danang Boutique Hotel", dates: "1/29 - 2/2 (4晚)", location: "峴港市區", note: "2*雙床房 + 1*雙人房。\n含早餐、有浴缸、頂樓泳池 (2022開幕)。", mapLink: "https://maps.app.goo.gl/CozyDanang", checkIn: "14:00", checkOut: "12:00" },
@@ -139,14 +139,22 @@
                 { dayId: 2, time: "21:30", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel。", type: "hotel" },
 
                 // Day 3
-                { dayId: 3, time: "08:00", title: "🥣 早餐：飯店", desc: "飯店早餐。", type: "food" },
-                { dayId: 3, time: "09:00", title: "🚗 前往五行山", desc: "叫車前往水山電梯售票口。", type: "transport", tag: "Grab 七人座" },
-                { dayId: 3, time: "09:30", title: "⛰️ 五行山", desc: "建議：電梯上山，走下山 (約10min)。\n參觀靈應寺、玄空洞。", type: "activity", map: "Marble Mountains" },
-                { dayId: 3, time: "12:00", title: "🥢 午餐：Thìa Gỗ", desc: "米其林推薦越南料理 (營業 10:00-22:00)。", type: "food", map: "Thìa Gỗ Da Nang" },
-                { dayId: 3, time: "14:00", title: "🛍️ 漢市場 & 粉紅教堂", desc: "漢市場 (Han Market)：\n1F 伴手禮/乾貨，2F 衣服鞋子。\n周邊金飾店可補換匯。", type: "shopping", map: "Han Market" },
-                { dayId: 3, time: "17:00", title: "🦞 晚餐：All Seasons", desc: "All Seasons Buffet Da Nang。\n⚠️ 已預訂龍蝦吃到飽，現場付費 (KKday訂位)。", type: "food", important: true, map: "All Seasons Buffet Da Nang" },
-                { dayId: 3, time: "20:00", title: "💆‍♀️ 按摩 SPA", desc: "Hương Tràm Spa (可預約)。\n或在美溪沙灘周邊散步。", type: "activity", map: "Hương Tràm Spa Da Nang" },
-                { dayId: 3, time: "22:00", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel。", type: "hotel" },
+　　　　　　　　　{ dayId: 3, time: "08:00", title: "🥣 早餐：飯店", desc: "飯店早餐。", type: "food" },
+　　　　　　　　　{ dayId: 3, time: "09:00", title: "🚗 前往五行山", desc: "叫車前往水山電梯售票口。", type: "transport", tag: "Grab 七人座" },
+　　　　　　　　　{ dayId: 3, time: "09:30", title: "⛰️ 五行山", desc: "建議：電梯上山，走下山 (約10min)。\n參觀靈應寺、玄空洞。", type: "activity", map: "Marble Mountains" },
+　　　　　　　　　{ dayId: 3, time: "12:00", title: "🥢 午餐：Thìa Gỗ", desc: "米其林推薦越南料理 (營業 10:00-22:00)。", type: "food", map: "Thìa Gỗ Da Nang" },
+　　　　　　　　　{ dayId: 3, time: "14:00", title: "🛍️ 漢市場 & 粉紅教堂", desc: "漢市場 (Han Market)：\n1F 伴手禮/乾貨，2F 衣服鞋子。\n周邊金飾店可補換匯。", type: "shopping", map: "Han Market" },
+　　　　　　　　　{ 
+　　　　　　　　　  dayId: 3, 
+ 　　　　　　　　　 time: "17:00", 
+　　　　　　　　　  title: "🦞 晚餐：All Seasons", 
+　　　　　　　　　  desc: "All Seasons Buffet Da Nang。\n⚠️ 已預訂 5 位龍蝦吃到飽，現場付費 (<a href='https://github.com/Wantinghsu/vngo/blob/main/lobster.png?raw=true' target='_blank'>訂位照片</a>)。\n(850k VND++/人，不含稅與飲品)。", 
+　　　　　　　　　  type: "food", 
+　　　　　　　　　  important: true, 
+　　　　　　　　　  map: "All Seasons Restaurant" 
+　　　　　　　　　},
+　　　　　　　　　{ dayId: 3, time: "20:00", title: "💆‍♀️ 按摩 SPA", desc: "Hương Tràm Spa (可預約)。\n或在美溪沙灘周邊散步。", type: "activity", map: "Hương Tràm Spa Da Nang" },
+　　　　　　　　　{ dayId: 3, time: "22:00", title: "🛌 回飯店休息", desc: "Cozy Danang Boutique Hotel。", type: "hotel" },
 
                 // Day 4
                 { dayId: 4, time: "07:30", title: "🥣 早餐：飯店", desc: "飯店早餐，吃飽準備長途車程。", type: "food" },
