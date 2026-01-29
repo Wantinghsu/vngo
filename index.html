@@ -42,6 +42,14 @@
             background-color: #e5e7eb;
             z-index: 0;
         }
+
+        /* 計算機 Modal 動畫 */
+        #calc-modal { transition: opacity 0.3s ease, visibility 0.3s ease; }
+        #calc-modal.hidden-modal { opacity: 0; visibility: hidden; pointer-events: none; }
+        #calc-modal.show-modal { opacity: 1; visibility: visible; pointer-events: auto; }
+        #calc-content { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .hidden-modal #calc-content { transform: scale(0.9) translateY(20px); }
+        .show-modal #calc-content { transform: scale(1) translateY(0); }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden max-w-md mx-auto bg-gray-50 shadow-2xl relative">
@@ -79,6 +87,54 @@
 
         <div id="view-hotels" class="tab-content p-5 space-y-4"></div>
     </main>
+
+    <button onclick="toggleCalc()" class="fixed bottom-24 right-5 z-40 bg-rose-500 hover:bg-rose-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+    </button>
+
+    <div id="calc-modal" class="fixed inset-0 z-[60] flex items-center justify-center px-4 hidden-modal">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleCalc()"></div>
+        <div id="calc-content" class="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden relative z-10">
+            <div class="bg-teal-600 p-4 text-white flex justify-between items-center">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    💱 匯率換算
+                    <span id="rate-status" class="text-[10px] bg-teal-800 px-2 py-0.5 rounded-full font-normal opacity-80">更新中...</span>
+                </h3>
+                <button onclick="toggleCalc()" class="text-white/80 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="text-center text-sm text-gray-500 mb-2">
+                    當前匯率：1 TWD ≈ <span id="display-rate" class="font-bold text-teal-600 text-lg">---</span> VND
+                </div>
+
+                <div class="space-y-4">
+                    <div class="relative">
+                        <label class="block text-xs font-bold text-gray-500 mb-1 ml-1">🇻🇳 越南盾 (VND)</label>
+                        <input type="number" id="input-vnd" placeholder="輸入金額" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-lg font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all">
+                        <span class="absolute right-4 top-[2.1rem] text-gray-400 text-sm font-bold">₫</span>
+                    </div>
+                    
+                    <div class="flex justify-center -my-2 relative z-10">
+                        <div class="bg-gray-100 p-2 rounded-full text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <label class="block text-xs font-bold text-gray-500 mb-1 ml-1">🇹🇼 新台幣 (TWD)</label>
+                        <input type="number" id="input-twd" placeholder="輸入金額" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-lg font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all">
+                        <span class="absolute right-4 top-[2.1rem] text-gray-400 text-sm font-bold">$</span>
+                    </div>
+                </div>
+                
+                <div class="text-xs text-gray-400 text-center mt-4">
+                    * 匯率僅供參考，實際請以換匯店家為準
+                </div>
+            </div>
+        </div>
+    </div>
 
     <nav class="bg-white border-t border-gray-200 shrink-0 pb-safe z-50 fixed bottom-0 w-full max-w-md">
         <div class="flex justify-around items-center h-16">
@@ -272,8 +328,11 @@
                 renderItinerary(currentDayId);
                 renderFlights();
                 renderHotels();
-                renderMustBuy(); // 新增渲染購物清單
+                renderMustBuy(); 
                 document.getElementById('loading-msg').style.display = 'none';
+                
+                // 初始化匯率
+                fetchExchangeRate();
             } catch (err) {
                 document.getElementById('loading-msg').innerHTML = `<span class="text-red-500">Error: ${err.message}</span>`;
             }
@@ -380,7 +439,7 @@
             list.innerHTML = html;
         }
 
-        // 新增：渲染必買清單 (含圖片)
+        // 渲染必買清單
         function renderMustBuy() {
             const container = document.getElementById('mustbuy-list');
             container.innerHTML = DATA.shopping.map(item => `
@@ -496,6 +555,70 @@
             };
             return icons[type] || icons.activity;
         }
+
+        // ==========================
+        // 匯率計算機邏輯
+        // ==========================
+        let exchangeRate = 770; // 預設匯率 (1 TWD = 770 VND)
+        const vndInput = document.getElementById('input-vnd');
+        const twdInput = document.getElementById('input-twd');
+        const rateDisplay = document.getElementById('display-rate');
+        const statusBadge = document.getElementById('rate-status');
+
+        function toggleCalc() {
+            const modal = document.getElementById('calc-modal');
+            if (modal.classList.contains('hidden-modal')) {
+                modal.classList.remove('hidden-modal');
+                modal.classList.add('show-modal');
+            } else {
+                modal.classList.remove('show-modal');
+                modal.classList.add('hidden-modal');
+            }
+        }
+
+        async function fetchExchangeRate() {
+            try {
+                // 使用免費 API 獲取 TWD 匯率
+                const res = await fetch('https://api.exchangerate-api.com/v4/latest/TWD');
+                const data = await res.json();
+                
+                if (data && data.rates && data.rates.VND) {
+                    exchangeRate = data.rates.VND;
+                    rateDisplay.innerText = Math.floor(exchangeRate); // 顯示整數
+                    statusBadge.innerText = "即時匯率";
+                    statusBadge.className = "text-[10px] bg-green-600 px-2 py-0.5 rounded-full font-normal";
+                } else {
+                    throw new Error("No rate data");
+                }
+            } catch (e) {
+                console.log("使用預設匯率", e);
+                rateDisplay.innerText = exchangeRate;
+                statusBadge.innerText = "預設匯率";
+                statusBadge.className = "text-[10px] bg-gray-500 px-2 py-0.5 rounded-full font-normal";
+            }
+        }
+
+        // 監聽 VND 輸入 -> 換算 TWD
+        vndInput.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val)) {
+                // TWD = VND / Rate
+                twdInput.value = (val / exchangeRate).toFixed(1);
+            } else {
+                twdInput.value = '';
+            }
+        });
+
+        // 監聽 TWD 輸入 -> 換算 VND
+        twdInput.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val)) {
+                // VND = TWD * Rate
+                vndInput.value = Math.floor(val * exchangeRate);
+            } else {
+                vndInput.value = '';
+            }
+        });
     </script>
 </body>
 </html>
