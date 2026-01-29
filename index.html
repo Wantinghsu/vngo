@@ -89,11 +89,19 @@
 
         <div id="view-accounting" class="tab-content p-5 space-y-4">
             
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
-                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    💸 新增一筆帳目
-                </h2>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6 relative transition-all duration-300" id="form-card">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2" id="form-title">
+                        💸 新增一筆帳目
+                    </h2>
+                    <button id="btn-cancel-edit" onclick="resetFormState()" class="hidden text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-bold">
+                        ✕ 取消
+                    </button>
+                </div>
+
                 <form id="account-form" class="space-y-4" onsubmit="submitExpense(event)">
+                    <input type="hidden" id="edit-row-id" value="">
+
                     <div class="grid grid-cols-2 gap-3">
                          <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">日期</label>
@@ -133,6 +141,7 @@
                          <label class="block text-xs font-bold text-gray-500 mb-1">備註 (選填)</label>
                          <input type="text" id="acc-note" placeholder="詳細說明..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
                     </div>
+                    
                     <button type="submit" id="btn-submit-acc" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2">
                         <span>記帳</span>
                     </button>
@@ -272,13 +281,13 @@
                 },
                 { 
                     name: "帶皮腰果", 
-                    image: "帶皮腰果.jpg",
+                    image: "帶皮腰果.png",
                     desc: "越大顆越貴。導遊特別交代盡量買「帶皮的」，因為去皮為了保存可能會浸藥水，帶皮的較天然且香氣更足。", 
                     highlight: "導遊推薦" 
                 },
                 { 
                     name: "Vinamit 香蕉乾/綜合果乾", 
-                    image: "Vinamit的香蕉乾.jpg",
+                    image: "Vinamit的香蕉乾.png",
                     desc: "越南水果非常甜，且 Vinamit 多使用天然糖漿醃製，不含化學添加物。口味豐富如波羅蜜、荔枝、芒果等。\n價格親民 (一包約 NTD 35)，是便宜又好吃的必買零食。", 
                     highlight: "天然零食" 
                 },
@@ -308,13 +317,13 @@
                 },
                 { 
                     name: "西寧蝦鹽 (Muối Tôm)", 
-                    image: "蝦鹽.jpg",
+                    image: "蝦鹽.png",
                     desc: "越南南部料理的靈魂！由鹽和乾燥蝦粉混合。質地細膩，帶有濃郁蝦香。\n💡 用法：蘸水果 (青芒果、鳳梨)、炸物、燒烤，能大幅提升風味層次。", 
                     highlight: "獨特調味" 
                 },
                 { 
                     name: "手工編織包", 
-                    image: "編織包.jpg",
+                    image: "編織包.png",
                     desc: "越南市集常見，編織技術精湛，搭配流蘇等裝飾。輕盈、堅固又實用，價格親民 (約 NTD 200 起)，質感不輸精品，是絕佳的穿搭配件。", 
                     highlight: "高CP值" 
                 }
@@ -761,8 +770,13 @@
             const currency = document.getElementById('acc-currency').value;
             const amount = document.getElementById('acc-amount').value;
             const note = document.getElementById('acc-note').value;
+            const editRowId = document.getElementById('edit-row-id').value; // 取得編輯ID
 
+            // 判斷是「新增」還是「編輯」
+            const action = editRowId ? 'edit' : 'add';
             const payload = {
+                action: action,
+                row: editRowId ? parseInt(editRowId) : null,
                 date: date,
                 item: item,
                 payer: payer,
@@ -778,16 +792,15 @@
                     body: JSON.stringify(payload)
                 });
                 
-                // 成功後重置表單並重新抓取列表
-                document.getElementById('account-form').reset();
-                document.getElementById('acc-date').valueAsDate = new Date(); // 重置日期為今天
+                // 成功後重置
+                resetFormState();
                 
-                alert(`✅ 記帳成功！\n${item} (${currency} ${amount})`);
+                alert(action === 'edit' ? '✅ 修改成功！' : `✅ 記帳成功！\n${item} (${currency} ${amount})`);
                 fetchExpenses(); // 重新整理列表
 
             } catch (err) {
                 console.error(err);
-                alert("❌ 記帳失敗，請檢查網路或 URL 設定");
+                alert("❌ 處理失敗，請檢查網路或 URL 設定");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
@@ -808,14 +821,14 @@
             }
         }
 
-        // === 新增：刪除功能 ===
+        // === 刪除功能 ===
         async function deleteExpense(rowId, itemName) {
             if (!confirm(`⚠️ 確定要刪除「${itemName}」嗎？\n(這筆資料會從計算中移除)`)) {
                 return;
             }
 
             try {
-                // 顯示簡單的 loading 提示
+                // 顯示 loading 提示
                 const card = document.getElementById(`expense-card-${rowId}`);
                 if(card) card.style.opacity = '0.5';
 
@@ -828,13 +841,50 @@
                 });
 
                 alert('🗑️ 已刪除');
-                fetchExpenses(); // 重新整理
+                fetchExpenses(); 
 
             } catch (err) {
                 console.error(err);
                 alert('❌ 刪除失敗，請檢查網路');
                 if(card) card.style.opacity = '1';
             }
+        }
+
+        // === 編輯功能：將資料帶入表單 ===
+        function editExpense(data) {
+            // 帶入資料
+            document.getElementById('acc-date').value = data.date.replace(/\//g, '-');
+            document.getElementById('acc-item').value = data.item;
+            document.getElementById('acc-payer').value = data.payer;
+            document.getElementById('acc-currency').value = data.currency;
+            document.getElementById('acc-amount').value = data.amount;
+            document.getElementById('acc-note').value = data.note;
+            
+            // 設定編輯 ID
+            document.getElementById('edit-row-id').value = data.rowIndex;
+
+            // 改變介面狀態
+            document.getElementById('form-title').innerHTML = `✏️ 修改帳目 <span class="text-xs text-gray-400 font-normal">#${data.rowIndex}</span>`;
+            document.getElementById('btn-submit-acc').innerHTML = '確認更新';
+            document.getElementById('btn-submit-acc').classList.replace('bg-teal-600', 'bg-blue-600');
+            document.getElementById('btn-submit-acc').classList.replace('hover:bg-teal-700', 'hover:bg-blue-700');
+            document.getElementById('btn-cancel-edit').classList.remove('hidden'); // 顯示取消按鈕
+            
+            // 滾動到表單
+            document.getElementById('app-container').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // === 重置表單狀態 (回到新增模式) ===
+        function resetFormState() {
+            document.getElementById('account-form').reset();
+            document.getElementById('edit-row-id').value = ''; // 清空編輯ID
+            document.getElementById('acc-date').valueAsDate = new Date(); // 日期回歸今天
+
+            document.getElementById('form-title').innerHTML = '💸 新增一筆帳目';
+            document.getElementById('btn-submit-acc').innerHTML = '<span>記帳</span>';
+            document.getElementById('btn-submit-acc').classList.replace('bg-blue-600', 'bg-teal-600');
+            document.getElementById('btn-submit-acc').classList.replace('hover:bg-blue-700', 'hover:bg-teal-700');
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
         }
 
         async function fetchExpenses() {
@@ -880,7 +930,6 @@
                     const amount = parseInt(row.twd);
                     if(!isNaN(amount)) {
                         totalTWD += amount;
-                        // 累加該付款人的墊付金額
                         if (PAID_TRACKER[row.payer] !== undefined) {
                             PAID_TRACKER[row.payer] += amount;
                         }
@@ -890,10 +939,7 @@
                 // 更新總結算看板數字
                 totalEl.innerText = totalTWD.toLocaleString();
                 
-                // 計算每人「應付」與「最終結算」
-                // 結算 = (總花費 * 個人比例) - 已墊付金額
-                // 正數 = 少付了，要拿錢出來 (紅色)
-                // 負數 = 多付了，要拿錢回來 (綠色)
+                // 計算結算
                 let splitHtml = '';
                 for (const [name, ratio] of Object.entries(SPLIT_RATIO)) {
                     const shouldPay = Math.round(totalTWD * ratio); // 應付
@@ -924,10 +970,13 @@
                 splitListEl.innerHTML = splitHtml;
                 summaryCard.classList.remove('hidden');
 
-                // 產生列表 HTML (加入刪除按鈕)
+                // 產生列表 HTML (加入編輯按鈕)
                 const html = data.map(row => {
                     const isTWD = row.currency === 'TWD';
                     const displayTime = row.date ? row.date.replace(/-/g, '/') : row.time; 
+                    
+                    // 將資料轉換為JSON字串，以便傳遞給編輯函數 (需處理單引號)
+                    const rowDataSafe = JSON.stringify(row).replace(/"/g, '&quot;');
 
                     return `
                         <div id="expense-card-${row.rowIndex}" class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex justify-between items-center relative group">
@@ -943,10 +992,16 @@
                                 <div class="font-bold text-teal-700 text-lg">$${parseInt(row.twd).toLocaleString()} <span class="text-[10px] text-gray-400 font-normal">TWD</span></div>
                                 ${!isTWD ? `<div class="text-xs text-gray-400 mb-1">${parseInt(row.amount).toLocaleString()} ${row.currency}</div>` : ''}
                                 
-                                <button onclick="deleteExpense(${row.rowIndex}, '${row.item}')" class="text-xs text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded mt-1 transition-colors flex items-center gap-1">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    刪除
-                                </button>
+                                <div class="flex gap-2 mt-1">
+                                    <button onclick="editExpense(${rowDataSafe})" class="text-xs text-blue-400 hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded transition-colors flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        修改
+                                    </button>
+                                    <button onclick="deleteExpense(${row.rowIndex}, '${row.item}')" class="text-xs text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded transition-colors flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        刪除
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;
