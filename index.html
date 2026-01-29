@@ -83,6 +83,60 @@
             <div id="mustbuy-list" class="space-y-6"></div>
         </div>
 
+        <div id="view-accounting" class="tab-content p-5 space-y-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    💸 新增一筆帳目
+                </h2>
+                <form id="account-form" class="space-y-4" onsubmit="submitExpense(event)">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">項目名稱</label>
+                        <input type="text" id="acc-item" required placeholder="例如：午餐、計程車" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">付款人</label>
+                            <select id="acc-payer" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <option value="我">我</option>
+                                <option value="朋友A">朋友A</option>
+                                <option value="朋友B">朋友B</option>
+                                <option value="公費">公費</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">幣別</label>
+                            <select id="acc-currency" onchange="updateRateDisplay()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <option value="VND">🇻🇳 越南盾</option>
+                                <option value="TWD">🇹🇼 台幣</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">金額</label>
+                        <input type="number" id="acc-amount" required placeholder="輸入數字" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-lg font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <p id="acc-rate-hint" class="text-xs text-gray-400 mt-1 text-right">正在讀取匯率...</p>
+                    </div>
+                    <div>
+                         <label class="block text-xs font-bold text-gray-500 mb-1">備註 (選填)</label>
+                         <input type="text" id="acc-note" placeholder="詳細說明..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    <button type="submit" id="btn-submit-acc" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2">
+                        <span>記帳</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="mt-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-gray-700">最近帳目</h3>
+                    <button onclick="fetchExpenses()" class="text-xs text-teal-600 font-bold bg-teal-50 px-2 py-1 rounded">↻ 重新整理</button>
+                </div>
+                <div id="expense-list" class="space-y-3 pb-10">
+                    <div class="text-center text-gray-400 py-4 text-sm">載入中...</div>
+                </div>
+            </div>
+        </div>
+
         <div id="view-flights" class="tab-content p-5 space-y-4"></div>
 
         <div id="view-hotels" class="tab-content p-5 space-y-4"></div>
@@ -137,27 +191,38 @@
     </div>
 
     <nav class="bg-white border-t border-gray-200 shrink-0 pb-safe z-50 fixed bottom-0 w-full max-w-md">
-        <div class="flex justify-around items-center h-16">
+        <div class="grid grid-cols-5 h-16">
             <button onclick="switchTab('itinerary')" id="btn-itinerary" class="nav-btn flex flex-col items-center justify-center w-full h-full text-teal-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                <span class="text-xs font-medium mt-1">行程</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                <span class="text-[10px] font-medium mt-1">行程</span>
             </button>
             <button onclick="switchTab('flights')" id="btn-flights" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                <span class="text-xs font-medium mt-1">班機</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                <span class="text-[10px] font-medium mt-1">班機</span>
             </button>
+            
+            <button onclick="switchTab('accounting')" id="btn-accounting" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="text-[10px] font-medium mt-1">分帳</span>
+            </button>
+
             <button onclick="switchTab('hotels')" id="btn-hotels" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zm-6-4a2 2 0 110-4 2 2 0 010 4zm6-10a2 2 0 110-4 2 2 0 010 4zm-6 4a2 2 0 110-4 2 2 0 010 4z"></path></svg>
-                <span class="text-xs font-medium mt-1">住宿</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zm-6-4a2 2 0 110-4 2 2 0 010 4zm6-10a2 2 0 110-4 2 2 0 010 4zm-6 4a2 2 0 110-4 2 2 0 010 4z"></path></svg>
+                <span class="text-[10px] font-medium mt-1">住宿</span>
             </button>
             <button onclick="switchTab('mustbuy')" id="btn-mustbuy" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span class="text-xs font-medium mt-1">必買</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span class="text-[10px] font-medium mt-1">必買</span>
             </button>
         </div>
     </nav>
 
     <script>
+        // ==========================================
+        // ⚠️ 請在這裡填入你的 Google Apps Script 網址
+        // ==========================================
+        const GAS_URL = "你的_GOOGLE_APPS_SCRIPT_網址_貼在這裡"; 
+
         const DATA = {
             shopping: [
                 { 
@@ -174,19 +239,19 @@
                 },
                 { 
                     name: "帶皮腰果", 
-                    image: "帶皮腰果.png",
+                    image: "帶皮腰果.jpg",
                     desc: "越大顆越貴。導遊特別交代盡量買「帶皮的」，因為去皮為了保存可能會浸藥水，帶皮的較天然且香氣更足。", 
                     highlight: "導遊推薦" 
                 },
                 { 
                     name: "Vinamit 香蕉乾/綜合果乾", 
-                    image: "Vinamit的香蕉乾.png",
+                    image: "Vinamit的香蕉乾.jpg",
                     desc: "越南水果非常甜，且 Vinamit 多使用天然糖漿醃製，不含化學添加物。口味豐富如波羅蜜、荔枝、芒果等。\n價格親民 (一包約 NTD 35)，是便宜又好吃的必買零食。", 
                     highlight: "天然零食" 
                 },
                 { 
                     name: "Ohla 芒果乾", 
-                    image: "Ohla 芒果乾.png",
+                    image: "Ohla 芒果乾.jpg",
                     desc: "口感厚實Q彈，保留了芒果的天然香氣與甜味，是近年來非常熱門的伴手禮選擇。", 
                     highlight: "人氣推薦" 
                 },
@@ -210,13 +275,13 @@
                 },
                 { 
                     name: "西寧蝦鹽 (Muối Tôm)", 
-                    image: "蝦鹽.png",
+                    image: "蝦鹽.jpg",
                     desc: "越南南部料理的靈魂！由鹽和乾燥蝦粉混合。質地細膩，帶有濃郁蝦香。\n💡 用法：蘸水果 (青芒果、鳳梨)、炸物、燒烤，能大幅提升風味層次。", 
                     highlight: "獨特調味" 
                 },
                 { 
                     name: "手工編織包", 
-                    image: "編織包.png",
+                    image: "編織包.jpg",
                     desc: "越南市集常見，編織技術精湛，搭配流蘇等裝飾。輕盈、堅固又實用，價格親民 (約 NTD 200 起)，質感不輸精品，是絕佳的穿搭配件。", 
                     highlight: "高CP值" 
                 }
@@ -321,6 +386,7 @@
 
         // --- Logic ---
         let currentDayId = 1;
+        let exchangeRate = 770; // 預設匯率
 
         window.addEventListener('DOMContentLoaded', () => {
             try {
@@ -347,6 +413,11 @@
             });
             document.getElementById(`btn-${tabName}`).classList.remove('text-gray-400');
             document.getElementById(`btn-${tabName}`).classList.add('text-teal-600');
+
+            // 如果切換到分帳頁面，自動讀取最新帳目
+            if(tabName === 'accounting') {
+                fetchExpenses();
+            }
         }
 
         function selectDay(dayId) {
@@ -559,7 +630,6 @@
         // ==========================
         // 匯率計算機邏輯
         // ==========================
-        let exchangeRate = 770; // 預設匯率 (1 TWD = 770 VND)
         const vndInput = document.getElementById('input-vnd');
         const twdInput = document.getElementById('input-twd');
         const rateDisplay = document.getElementById('display-rate');
@@ -587,6 +657,7 @@
                     rateDisplay.innerText = Math.floor(exchangeRate); // 顯示整數
                     statusBadge.innerText = "即時匯率";
                     statusBadge.className = "text-[10px] bg-green-600 px-2 py-0.5 rounded-full font-normal";
+                    updateRateDisplay(); // 如果正在分帳頁面，順便更新提示
                 } else {
                     throw new Error("No rate data");
                 }
@@ -602,7 +673,6 @@
         vndInput.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
             if (!isNaN(val)) {
-                // TWD = VND / Rate
                 twdInput.value = (val / exchangeRate).toFixed(1);
             } else {
                 twdInput.value = '';
@@ -613,12 +683,131 @@
         twdInput.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
             if (!isNaN(val)) {
-                // VND = TWD * Rate
                 vndInput.value = Math.floor(val * exchangeRate);
             } else {
                 vndInput.value = '';
             }
         });
+
+        // ==========================
+        // 記帳 & GAS 串接邏輯
+        // ==========================
+        
+        function updateRateDisplay() {
+            const currency = document.getElementById('acc-currency').value;
+            const hint = document.getElementById('acc-rate-hint');
+            if (currency === 'TWD') {
+                hint.innerText = '以 1:1 計算';
+            } else {
+                hint.innerText = `當前匯率: 1 TWD ≈ ${Math.floor(exchangeRate)} VND`;
+            }
+        }
+
+        async function submitExpense(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-acc');
+            const originalText = btn.innerHTML;
+            
+            // 檢查是否已設定 URL
+            if(GAS_URL.includes("你的_GOOGLE")) {
+                alert("請先在程式碼中設定 GAS_URL！");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> 處理中...`;
+
+            const item = document.getElementById('acc-item').value;
+            const payer = document.getElementById('acc-payer').value;
+            const currency = document.getElementById('acc-currency').value;
+            const amount = document.getElementById('acc-amount').value;
+            const note = document.getElementById('acc-note').value;
+
+            const payload = {
+                item: item,
+                payer: payer,
+                currency: currency,
+                amount: amount,
+                rate: exchangeRate, // 傳送當下匯率
+                note: note
+            };
+
+            try {
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                // 成功後重置表單並重新抓取列表
+                document.getElementById('account-form').reset();
+                alert(`✅ 記帳成功！\n${item} (${currency} ${amount})`);
+                fetchExpenses(); // 重新整理列表
+
+            } catch (err) {
+                console.error(err);
+                alert("❌ 記帳失敗，請檢查網路或 URL 設定");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function fetchExpenses() {
+            const listDiv = document.getElementById('expense-list');
+            
+             if(GAS_URL.includes("你的_GOOGLE")) {
+                listDiv.innerHTML = `<div class="text-center text-red-400 p-4">請先設定 GAS_URL</div>`;
+                return;
+            }
+            
+            listDiv.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm animate-pulse">正在讀取雲端帳目...</div>`;
+
+            try {
+                const res = await fetch(GAS_URL);
+                const data = await res.json();
+                
+                if (data.length === 0) {
+                    listDiv.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm">目前沒有帳目</div>`;
+                    return;
+                }
+
+                // 產生列表 HTML
+                let totalTWD = 0;
+                const html = data.map(row => {
+                    totalTWD += parseInt(row.twd);
+                    const isTWD = row.currency === 'TWD';
+                    return `
+                        <div class="bg-white border border-gray-100 rounded-xl p-3 shadow-sm flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-gray-800 text-sm">${row.item}</div>
+                                <div class="text-xs text-gray-500 mt-0.5">
+                                    <span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">${row.payer}</span>
+                                    <span class="ml-1">${row.time}</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-teal-700 text-sm">$${row.twd} <span class="text-[10px] text-gray-400">TWD</span></div>
+                                ${!isTWD ? `<div class="text-xs text-gray-400">${row.amount} ${row.currency}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // 加入總計
+                const summaryHtml = `
+                    <div class="bg-teal-600 text-white rounded-xl p-4 mb-4 shadow-md flex justify-between items-center">
+                        <span class="font-bold text-sm">目前總開銷</span>
+                        <span class="font-black text-xl">$${totalTWD.toLocaleString()} <span class="text-xs font-normal opacity-80">TWD</span></span>
+                    </div>
+                `;
+
+                listDiv.innerHTML = summaryHtml + html;
+
+            } catch (err) {
+                console.error(err);
+                listDiv.innerHTML = `<div class="text-center text-red-400 py-4 text-sm">讀取失敗，請稍後再試</div>`;
+            }
+        }
     </script>
 </body>
 </html>
