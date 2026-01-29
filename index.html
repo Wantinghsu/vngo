@@ -84,7 +84,8 @@
         </div>
 
         <div id="view-accounting" class="tab-content p-5 space-y-4">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
                 <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                     💸 新增一筆帳目
                 </h2>
@@ -134,11 +135,24 @@
                 </form>
             </div>
 
-            <div class="mt-6">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-gray-700">帳目列表</h3>
-                    <button onclick="fetchExpenses()" class="text-xs text-teal-600 font-bold bg-teal-50 px-2 py-1 rounded">↻ 重新整理</button>
+            <div id="expense-summary-card" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-4 hidden">
+                <div class="flex justify-between items-end mb-4 border-b border-gray-100 pb-3">
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold">總支出 (Total)</p>
+                        <p class="text-3xl font-black text-teal-700" id="total-expense">0</p>
+                    </div>
+                    <div class="text-right">
+                        <button onclick="fetchExpenses()" class="text-xs text-teal-600 font-bold bg-teal-50 px-3 py-1.5 rounded-full mb-1">↻ 更新數據</button>
+                        <p class="text-[10px] text-gray-400">單位: TWD</p>
+                    </div>
                 </div>
+                <h4 class="text-xs font-bold text-gray-500 mb-2">每人應付分攤額：</h4>
+                <div class="space-y-2" id="split-result-list">
+                    </div>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-gray-700 mb-3 px-1">消費明細</h3>
                 <div id="expense-list" class="space-y-3 pb-10">
                     <div class="text-center text-gray-400 py-4 text-sm">載入中...</div>
                 </div>
@@ -226,10 +240,8 @@
 
     <script>
         // ==========================================
-        // ⚠️ 檢查你的 Google Apps Script 網址
+        // ⚠️ Google Apps Script 網址
         // ==========================================
-        // 如果你剛剛有重新部署並取得新網址，請更換這裡
-        // 如果網址沒變，直接使用即可
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxkMih0wCDogTrbg4zPUgWqpJ4S8gSBi94Vpn_AROib15BhNiPyZowkNpeFnGpl0L_DqA/exec"; 
 
         const DATA = {
@@ -685,6 +697,7 @@
         vndInput.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
             if (!isNaN(val)) {
+                // 修正：越南盾換回台幣是除法
                 twdInput.value = (val / exchangeRate).toFixed(1);
             } else {
                 twdInput.value = '';
@@ -695,6 +708,7 @@
         twdInput.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
             if (!isNaN(val)) {
+                // 台幣換越南盾是乘法
                 vndInput.value = Math.floor(val * exchangeRate);
             } else {
                 vndInput.value = '';
@@ -770,6 +784,9 @@
 
         async function fetchExpenses() {
             const listDiv = document.getElementById('expense-list');
+            const summaryCard = document.getElementById('expense-summary-card');
+            const totalEl = document.getElementById('total-expense');
+            const splitListEl = document.getElementById('split-result-list');
             
              if(GAS_URL.includes("你的_GOOGLE")) {
                 listDiv.innerHTML = `<div class="text-center text-red-400 p-4">請先設定 GAS_URL</div>`;
@@ -793,57 +810,58 @@
                 
                 if (data.length === 0) {
                     listDiv.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm">目前沒有帳目</div>`;
+                    summaryCard.classList.add('hidden');
                     return;
                 }
 
-                // 產生列表 HTML
+                // 計算總金額
                 let totalTWD = 0;
+                data.forEach(row => {
+                    const amount = parseInt(row.twd);
+                    if(!isNaN(amount)) totalTWD += amount;
+                });
+
+                // 更新總結算看板
+                totalEl.innerText = totalTWD.toLocaleString();
+                
+                // 計算每人應付
+                let splitHtml = '';
+                for (const [name, ratio] of Object.entries(SPLIT_RATIO)) {
+                    const share = Math.round(totalTWD * ratio);
+                    splitHtml += `
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">${name} (${(ratio*100).toFixed(2)}%)</span>
+                            <span class="font-bold text-gray-800">$${share.toLocaleString()}</span>
+                        </div>
+                    `;
+                }
+                splitListEl.innerHTML = splitHtml;
+                summaryCard.classList.remove('hidden');
+
+                // 產生列表 HTML (移除單筆分帳)
                 const html = data.map(row => {
-                    const amountTWD = parseInt(row.twd);
-                    totalTWD += amountTWD;
                     const isTWD = row.currency === 'TWD';
                     const displayTime = row.date ? row.date.replace(/-/g, '/') : row.time; // 優先顯示日期
-                    
-                    // 計算分帳顯示字串
-                    let splitDisplay = '';
-                    if(!isNaN(amountTWD)) {
-                        splitDisplay = Object.entries(SPLIT_RATIO).map(([name, ratio]) => {
-                            const share = Math.round(amountTWD * ratio);
-                            return `<span class="mr-2">${name}:$${share}</span>`;
-                        }).join('');
-                    }
 
                     return `
-                        <div class="bg-white border border-gray-100 rounded-xl p-3 shadow-sm">
-                            <div class="flex justify-between items-center mb-2">
-                                <div>
-                                    <div class="font-bold text-gray-800 text-sm">${row.item}</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">
-                                        <span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">${row.payer}</span>
-                                        <span class="ml-1">${displayTime}</span>
-                                    </div>
+                        <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-gray-800 text-sm">${row.item}</div>
+                                <div class="text-xs text-gray-500 mt-1 flex items-center gap-2">
+                                    <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600 font-medium">${row.payer}</span>
+                                    <span class="opacity-75">${displayTime}</span>
                                 </div>
-                                <div class="text-right">
-                                    <div class="font-bold text-teal-700 text-sm">$${row.twd} <span class="text-[10px] text-gray-400">TWD</span></div>
-                                    ${!isTWD ? `<div class="text-xs text-gray-400">${row.amount} ${row.currency}</div>` : ''}
-                                </div>
+                                ${row.note ? `<div class="text-xs text-gray-400 mt-1">${row.note}</div>` : ''}
                             </div>
-                            <div class="border-t border-gray-100 pt-2 mt-1 text-[10px] text-gray-400 flex flex-wrap">
-                                ${splitDisplay}
+                            <div class="text-right">
+                                <div class="font-bold text-teal-700 text-lg">$${parseInt(row.twd).toLocaleString()} <span class="text-[10px] text-gray-400 font-normal">TWD</span></div>
+                                ${!isTWD ? `<div class="text-xs text-gray-400">${parseInt(row.amount).toLocaleString()} ${row.currency}</div>` : ''}
                             </div>
                         </div>
                     `;
                 }).join('');
                 
-                // 加入總計
-                const summaryHtml = `
-                    <div class="bg-teal-600 text-white rounded-xl p-4 mb-4 shadow-md flex justify-between items-center">
-                        <span class="font-bold text-sm">目前總開銷</span>
-                        <span class="font-black text-xl">$${totalTWD.toLocaleString()} <span class="text-xs font-normal opacity-80">TWD</span></span>
-                    </div>
-                `;
-
-                listDiv.innerHTML = summaryHtml + html;
+                listDiv.innerHTML = html;
 
             } catch (err) {
                 console.error(err);
