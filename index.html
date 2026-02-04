@@ -18,7 +18,7 @@
         .pt-safe-top { padding-top: max(env(safe-area-inset-top), 1rem); }
         .tab-content { display: none; opacity: 0; transition: opacity 0.2s ease-in-out; }
         .tab-content.active { display: block; opacity: 1; }
-
+        
         /* 文字展開收合樣式 */
         .desc-text {
             display: -webkit-box;
@@ -31,7 +31,7 @@
         .desc-text.expanded {
             -webkit-line-clamp: unset;
         }
-
+        
         /* 時間軸線條 */
         .timeline-line {
             position: absolute;
@@ -50,7 +50,7 @@
         #calc-content { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .hidden-modal #calc-content { transform: scale(0.9) translateY(20px); }
         .show-modal #calc-content { transform: scale(1) translateY(0); }
-
+        
         /* 結算區塊動畫 */
         #settlement-details { transition: max-height 0.3s ease-out, opacity 0.3s ease; overflow: hidden; max-height: 0; opacity: 0; }
         #settlement-details.open { max-height: 500px; opacity: 1; }
@@ -71,7 +71,7 @@
         <div id="loading-msg" class="p-10 text-center text-gray-500">
             資料載入中...
         </div>
-
+        
         <div id="view-itinerary" class="tab-content active">
             <div class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 py-3 shadow-sm">
                 <div id="day-selector" class="flex px-4 gap-3 overflow-x-auto hide-scrollbar"></div>
@@ -88,7 +88,7 @@
         </div>
 
         <div id="view-accounting" class="tab-content p-5 space-y-4">
-
+            
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6 relative transition-all duration-300" id="form-card">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2" id="form-title">
@@ -136,12 +136,12 @@
                         </div>
                     </div>
                     <p id="acc-rate-hint" class="text-xs text-gray-400 -mt-2 text-right">正在讀取匯率...</p>
-
+                    
                     <div>
                          <label class="block text-xs font-bold text-gray-500 mb-1">備註 (選填)</label>
                          <input type="text" id="acc-note" placeholder="詳細說明..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
                     </div>
-
+                    
                     <button type="submit" id="btn-submit-acc" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2">
                         <span>記帳</span>
                     </button>
@@ -212,7 +212,7 @@
                         <input type="number" id="input-vnd" placeholder="輸入金額" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-lg font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all">
                         <span class="absolute right-4 top-[2.1rem] text-gray-400 text-sm font-bold">₫</span>
                     </div>
-
+                    
                     <div class="flex justify-center -my-2 relative z-10">
                         <div class="bg-gray-100 p-2 rounded-full text-gray-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
@@ -225,7 +225,7 @@
                         <span class="absolute right-4 top-[2.1rem] text-gray-400 text-sm font-bold">$</span>
                     </div>
                 </div>
-
+                
                 <div class="text-xs text-gray-400 text-center mt-4">
                     * 匯率僅供參考，實際請以換匯店家為準
                 </div>
@@ -243,7 +243,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                 <span class="text-[10px] font-medium mt-1">班機</span>
             </button>
-
+            
             <button onclick="switchTab('hotels')" id="btn-hotels" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zm-6-4a2 2 0 110-4 2 2 0 010 4zm6-10a2 2 0 110-4 2 2 0 010 4zm-6 4a2 2 0 110-4 2 2 0 010 4z"></path></svg>
                 <span class="text-[10px] font-medium mt-1">住宿</span>
@@ -355,7 +355,7 @@
                 { dayId: 1, time: "20:30", title: "🏨 Check-in", desc: "<a href='https://www.google.com/maps/search/?api=1&query=Cozy+Danang+Boutique+Hotel' target='_blank'>Cozy Danang Boutique Hotel</a>\n放置行李。", type: "hotel", map: "Cozy Danang Boutique Hotel" },
                 { dayId: 1, time: "21:00", title: "🍜 晚餐：功夫麵", desc: "<a href='https://www.google.com/maps/search/?api=1&query=Kungfu+Noodle+Restaurant+Danang' target='_blank'>Kungfu Noodle Restaurant</a> (營業至 21:30)。\n網友推薦：牛肉麵、廣南麵 (平價好吃)。", type: "food", map: "Kungfu Noodle Restaurant" },
                 { dayId: 1, time: "22:00", title: "🛌 回飯店休息", desc: "<a href='https://www.google.com/maps/search/?api=1&query=Cozy+Danang+Boutique+Hotel' target='_blank'>Cozy Danang Boutique Hotel</a>。", type: "hotel" },
-
+                
                 // Day 2
                 { dayId: 2, time: "07:00", title: "🥣 早餐：飯店", desc: "飯店早餐 (供應時間 06:30-10:00)。", type: "food" },
                 { dayId: 2, time: "07:30", title: "🚌 前往巴拿山", desc: "KKday 接送 (請在飯店大廳等候)。\n⚠️ 重要：山上氣溫低 5-10 度，務必帶外套和雨具。", type: "transport", tag: "KKday 接送", important: true },
@@ -374,12 +374,10 @@
                 { dayId: 3, time: "09:30", title: "⛰️ 五行山", desc: "建議：電梯上山，走下山 (約10min)。\n參觀靈應寺、玄空洞。", type: "activity", map: "Marble Mountains" },
                 { dayId: 3, time: "12:00", title: "🥢 午餐：Thìa Gỗ", desc: "米其林推薦越南料理 (營業 10:00-22:00)。", type: "food", map: "Thìa Gỗ Da Nang" },
                 { dayId: 3, time: "14:00", title: "🛍️ 漢市場 & 粉紅教堂", desc: "漢市場 (Han Market)：\n1F 伴手禮/乾貨，2F 衣服鞋子。\n周邊金飾店可補換匯。", type: "shopping", map: "Han Market" },
-                { 
                 {  
                   dayId: 3, 
                   time: "17:00", 
                   title: "🦞 晚餐：All Seasons", 
-                  desc: "All Seasons Buffet Da Nang。\n⚠️ 已預訂 5 位龍蝦吃到飽，現場付費 (<a href='https://github.com/Wantinghsu/vngo/blob/main/lobster.png?raw=true' target='_blank'>訂位照片</a>)。\n(850k VND++/人，不含稅與飲品)。", 
                   // 修改處：加入了 class='text-blue-600 font-bold underline'
                   desc: "All Seasons Buffet Da Nang。\n⚠️ 已預訂 5 位龍蝦吃到飽，現場付費 (<a href='https://github.com/Wantinghsu/vngo/blob/main/lobster.png?raw=true' target='_blank' class='text-blue-600 font-bold underline'>訂位照片</a>)。\n(850k VND++/人，不含稅與飲品)。", 
                   type: "food", 
@@ -441,7 +439,7 @@
                 renderHotels();
                 renderMustBuy(); 
                 document.getElementById('loading-msg').style.display = 'none';
-
+                
                 // 設定日期預設為今天
                 document.getElementById('acc-date').valueAsDate = new Date();
 
@@ -507,7 +505,7 @@
                     const typeColor = getTypeColor(item.type);
                     const typeIcon = getTypeIcon(item.type);
                     const transportBadge = item.tag ? `<div class="bg-blue-50 px-3 py-1.5 border-b border-blue-100 flex items-center gap-1 text-xs font-bold text-blue-700">${item.tag}</div>` : '';
-
+                    
                     const charterClass = item.charter ? 'border-2 border-l-4 border-blue-200 bg-blue-50/20' : '';
                     const importantStyle = ''; 
                     const finalStyle = item.charter ? charterClass : importantStyle;
@@ -517,7 +515,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </a>
                     ` : '';
-
+                    
                     const needToggle = item.desc.length > 30; 
                     const toggleIndicator = needToggle ? `
                         <div class="text-xs text-gray-400 mt-2 flex items-center gap-1 opacity-70">
@@ -699,7 +697,7 @@
                 // 使用免費 API 獲取 TWD 匯率
                 const res = await fetch('https://api.exchangerate-api.com/v4/latest/TWD');
                 const data = await res.json();
-
+                
                 if (data && data.rates && data.rates.VND) {
                     exchangeRate = data.rates.VND;
                     rateDisplay.innerText = Math.floor(exchangeRate); // 顯示整數
@@ -742,7 +740,7 @@
         // ==========================
         // 記帳 & GAS 串接邏輯
         // ==========================
-
+        
         function updateRateDisplay() {
             const currency = document.getElementById('acc-currency').value;
             const hint = document.getElementById('acc-rate-hint');
@@ -757,7 +755,7 @@
             e.preventDefault();
             const btn = document.getElementById('btn-submit-acc');
             const originalText = btn.innerHTML;
-
+            
             // 檢查是否已設定 URL
             if(GAS_URL.includes("你的_GOOGLE")) {
                 alert("請先在程式碼中設定 GAS_URL！");
@@ -794,10 +792,10 @@
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-
+                
                 // 成功後重置
                 resetFormState();
-
+                
                 alert(action === 'edit' ? '✅ 修改成功！' : `✅ 記帳成功！\n${item} (${currency} ${amount})`);
                 fetchExpenses(); // 重新整理列表
 
@@ -814,7 +812,7 @@
         function toggleSettlement() {
             const detailBox = document.getElementById('settlement-details');
             const arrow = document.getElementById('arrow-settlement');
-
+            
             if (detailBox.classList.contains('open')) {
                 detailBox.classList.remove('open');
                 arrow.style.transform = 'rotate(0deg)';
@@ -862,7 +860,7 @@
             document.getElementById('acc-currency').value = data.currency;
             document.getElementById('acc-amount').value = data.amount;
             document.getElementById('acc-note').value = data.note;
-
+            
             // 設定編輯 ID
             document.getElementById('edit-row-id').value = data.rowIndex;
 
@@ -872,7 +870,7 @@
             document.getElementById('btn-submit-acc').classList.replace('bg-teal-600', 'bg-blue-600');
             document.getElementById('btn-submit-acc').classList.replace('hover:bg-teal-700', 'hover:bg-blue-700');
             document.getElementById('btn-cancel-edit').classList.remove('hidden'); // 顯示取消按鈕
-
+            
             // 滾動到表單
             document.getElementById('app-container').scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -895,12 +893,12 @@
             const summaryCard = document.getElementById('expense-summary-card');
             const totalEl = document.getElementById('total-expense');
             const splitListEl = document.getElementById('split-result-list');
-
+            
              if(GAS_URL.includes("你的_GOOGLE")) {
                 listDiv.innerHTML = `<div class="text-center text-red-400 p-4">請先設定 GAS_URL</div>`;
                 return;
             }
-
+            
             listDiv.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm animate-pulse">正在讀取雲端帳目...</div>`;
 
             // 分帳比例設定
@@ -920,7 +918,7 @@
             try {
                 const res = await fetch(GAS_URL);
                 const data = await res.json();
-
+                
                 if (data.length === 0) {
                     listDiv.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm">目前沒有帳目</div>`;
                     summaryCard.classList.add('hidden');
@@ -941,7 +939,7 @@
 
                 // 更新總結算看板數字
                 totalEl.innerText = totalTWD.toLocaleString();
-
+                
                 // 計算結算
                 let splitHtml = '';
                 for (const [name, ratio] of Object.entries(SPLIT_RATIO)) {
@@ -977,7 +975,7 @@
                 const html = data.map(row => {
                     const isTWD = row.currency === 'TWD';
                     const displayTime = row.date ? row.date.replace(/-/g, '/') : row.time; 
-
+                    
                     // 將資料轉換為JSON字串，以便傳遞給編輯函數 (需處理單引號)
                     const rowDataSafe = JSON.stringify(row).replace(/"/g, '&quot;');
 
@@ -1009,7 +1007,7 @@
                         </div>
                     `;
                 }).join('');
-
+                
                 listDiv.innerHTML = html;
 
             } catch (err) {
