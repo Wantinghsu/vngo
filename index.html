@@ -53,7 +53,7 @@
         
         /* 結算區塊動畫 */
         #settlement-details { transition: max-height 0.3s ease-out, opacity 0.3s ease; overflow: hidden; max-height: 0; opacity: 0; }
-        #settlement-details.open { max-height: 500px; opacity: 1; }
+        #settlement-details.open { max-height: 600px; opacity: 1; }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden max-w-md mx-auto bg-gray-50 shadow-2xl relative">
@@ -150,7 +150,7 @@
 
             <div id="expense-summary-card" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-4 hidden">
                 <div class="flex justify-between items-center mb-1">
-                    <p class="text-xs text-gray-500 font-bold">總支出 (Total)</p>
+                    <p class="text-xs text-gray-500 font-bold">公款總欠款 (Total Debt)</p>
                     <div class="flex gap-2">
                         <button onclick="fetchExpenses()" class="text-[10px] text-teal-600 font-bold bg-teal-50 px-2 py-1 rounded-full">↻ 更新</button>
                     </div>
@@ -158,16 +158,16 @@
                 <div class="flex justify-between items-end border-b border-gray-100 pb-4 mb-3">
                     <p class="text-3xl font-black text-teal-700" id="total-expense">0</p>
                     <button onclick="toggleSettlement()" id="btn-toggle-settlement" class="text-xs text-blue-600 font-bold flex items-center gap-1 hover:bg-blue-50 px-2 py-1 rounded transition-colors">
-                        <span>查看結算</span>
+                        <span>查看結算表</span>
                         <svg class="w-3 h-3 transform transition-transform duration-200" id="arrow-settlement" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                 </div>
 
                 <div id="settlement-details" class="space-y-3 text-sm">
-                    <div class="bg-gray-50 p-3 rounded-lg text-xs text-gray-500 mb-2">
-                        <p>💡 負數(<span class="text-green-600 font-bold">綠色</span>)代表此人代墊太多，應拿回款項；正數(<span class="text-rose-500 font-bold">紅色</span>)代表應支付款項。</p>
+                    <div class="bg-blue-50 p-3 rounded-lg text-xs text-blue-800 mb-2">
+                        <p>💡 <b>邏輯說明：</b><br>每人可分得權益 = 總欠款 ÷ 5<br>若 <b>欠款 > 權益</b>：需補錢 (<span class="text-rose-500 font-bold">紅色</span>)<br>若 <b>欠款 < 權益</b>：可拿回 (<span class="text-green-600 font-bold">綠色</span>)</p>
                     </div>
-                    <div class="space-y-3" id="split-result-list">
+                    <div id="split-result-list">
                         </div>
                 </div>
             </div>
@@ -901,16 +901,10 @@
             
             listDiv.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm animate-pulse">正在讀取雲端帳目...</div>`;
 
-            // 分帳比例設定
-            const SPLIT_RATIO = {
-                '榮': 0.1333,
-                '如': 0.1333,
-                '翔': 0.2667,
-                '庭': 0.2667,
-                '中': 0.20
-            };
+            // 分帳人員名單
+            const MEMBERS = ['榮', '如', '翔', '庭', '中'];
 
-            // 紀錄每個人已付款金額 (墊付)
+            // 紀錄每個人已付款金額 (墊付/欠款)
             let PAID_TRACKER = {
                 '榮': 0, '如': 0, '翔': 0, '庭': 0, '中': 0
             };
@@ -938,36 +932,53 @@
                 });
 
                 // 更新總結算看板數字
-                totalEl.innerText = totalTWD.toLocaleString();
+                totalEl.innerText = '$' + totalTWD.toLocaleString();
                 
-                // 計算結算
-                let splitHtml = '';
-                for (const [name, ratio] of Object.entries(SPLIT_RATIO)) {
-                    const shouldPay = Math.round(totalTWD * ratio); // 應付
-                    const hasPaid = PAID_TRACKER[name]; // 已付
-                    const balance = shouldPay - hasPaid; // 差額
+                // === 結算邏輯 (每人平分公款權益) ===
+                const avgShare = Math.round(totalTWD / 5);
+                
+                let splitHtml = `
+                    <div class="mb-2 text-xs text-gray-500 text-center">
+                        公款權益：$${totalTWD.toLocaleString()} ÷ 5 = <span class="text-teal-600 font-bold">$${avgShare.toLocaleString()}</span> /人
+                    </div>
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-gray-500 bg-gray-50 border-b">
+                            <tr>
+                                <th class="py-2 pl-2">姓名</th>
+                                <th class="py-2 text-right">欠款</th>
+                                <th class="py-2 text-right pr-2">結算</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                `;
 
+                MEMBERS.forEach(name => {
+                    const personalDebt = PAID_TRACKER[name] || 0;
+                    // 核心邏輯：欠款 - 平均應得 = 需支付 (正數) / 應退回 (負數)
+                    const net = personalDebt - avgShare; 
+                    
                     let balanceText = '';
-                    if (balance > 0) {
-                        balanceText = `<span class="text-rose-500 font-bold">需支付 $${balance.toLocaleString()}</span>`;
-                    } else if (balance < 0) {
-                        balanceText = `<span class="text-green-600 font-bold">應拿回 $${Math.abs(balance).toLocaleString()}</span>`;
+                    if (net > 0) {
+                        // 欠的 > 應得的 -> 拿錢出來
+                        balanceText = `<span class="text-rose-500 font-bold">付 $${net.toLocaleString()}</span>`;
+                    } else if (net < 0) {
+                        // 欠的 < 應得的 -> 拿錢回去
+                        balanceText = `<span class="text-green-600 font-bold">拿 $${Math.abs(net).toLocaleString()}</span>`;
                     } else {
-                        balanceText = `<span class="text-gray-400">已結清</span>`;
+                        balanceText = `<span class="text-gray-400">0</span>`;
                     }
 
                     splitHtml += `
-                        <div class="flex justify-between items-center bg-white p-2 rounded border border-gray-100">
-                            <div>
-                                <span class="font-bold text-gray-700 mr-2">${name}</span>
-                                <span class="text-[10px] text-gray-400">應付$${shouldPay.toLocaleString()} / 已付$${hasPaid.toLocaleString()}</span>
-                            </div>
-                            <div class="text-right text-sm">
-                                ${balanceText}
-                            </div>
-                        </div>
+                        <tr>
+                            <td class="py-2 pl-2 font-bold text-gray-700">${name}</td>
+                            <td class="py-2 text-right text-gray-400 text-xs">$${personalDebt.toLocaleString()}</td>
+                            <td class="py-2 text-right pr-2">${balanceText}</td>
+                        </tr>
                     `;
-                }
+                });
+                
+                splitHtml += `</tbody></table>`;
+                
                 splitListEl.innerHTML = splitHtml;
                 summaryCard.classList.remove('hidden');
 
@@ -977,7 +988,7 @@
                     const displayTime = row.date ? row.date.replace(/-/g, '/') : row.time; 
                     
                     // 將資料轉換為JSON字串，以便傳遞給編輯函數 (需處理單引號)
-                    const rowDataSafe = JSON.stringify(row).replace(/"/g, '&quot;');
+                    const rowDataSafe = JSON.stringify(row).replace(/"/g, '"');
 
                     return `
                         <div id="expense-card-${row.rowIndex}" class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex justify-between items-center relative group">
