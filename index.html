@@ -51,9 +51,9 @@
         .hidden-modal #calc-content { transform: scale(0.9) translateY(20px); }
         .show-modal #calc-content { transform: scale(1) translateY(0); }
         
-        /* 結算區塊動畫 */
+        /* 結算區塊動畫 - 調大 max-height 以容納圖片 */
         #settlement-details { transition: max-height 0.3s ease-out, opacity 0.3s ease; overflow: hidden; max-height: 0; opacity: 0; }
-        #settlement-details.open { max-height: 500px; opacity: 1; }
+        #settlement-details.open { max-height: 2000px; opacity: 1; }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden max-w-md mx-auto bg-gray-50 shadow-2xl relative">
@@ -168,7 +168,11 @@
                         <p>💡 負數(<span class="text-green-600 font-bold">綠色</span>)代表此人代墊太多，應拿回款項；正數(<span class="text-rose-500 font-bold">紅色</span>)代表應支付款項。</p>
                     </div>
                     <div class="space-y-3" id="split-result-list">
-                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-100">
+                        <p class="text-xs font-bold text-gray-400 mb-2">📊 公款消費明細圖表</p>
+                        <img src="公款消費明細.png" alt="公款消費明細" class="w-full rounded-lg shadow-sm border border-gray-100">
+                    </div>
                 </div>
             </div>
 
@@ -288,7 +292,7 @@
                 { 
                     name: "Vinamit 香蕉乾/綜合果乾", 
                     image: "Vinamit的香蕉乾.png",
-                    desc: "越南水果非常甜，且 Vinamit 多使用天然糖漿醃製，不含化學添加物。口味豐富如波羅蜜、荔枝、芒果等。\n價格親民 (一包約 NTD 35)，是便宜又好吃的必買零食。", 
+                    desc: "越南水果非常甜，且 Vinamit 多使用天然糖漿醃製，不含化學添加物。口味豐富如波羅蜜、荔枝、芒果等.\n價格親民 (一包約 NTD 35)，是便宜又好吃的必買零食。", 
                     highlight: "天然零食" 
                 },
                 { 
@@ -977,7 +981,7 @@
                     const displayTime = row.date ? row.date.replace(/-/g, '/') : row.time; 
                     
                     // 將資料轉換為JSON字串，以便傳遞給編輯函數 (需處理單引號)
-                    const rowDataSafe = JSON.stringify(row).replace(/"/g, '&quot;');
+                    const rowDataSafe = JSON.stringify(row).replace(/"/g, '"');
 
                     return `
                         <div id="expense-card-${row.rowIndex}" class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex justify-between items-center relative group">
