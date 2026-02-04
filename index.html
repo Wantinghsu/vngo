@@ -166,59 +166,59 @@
                 <div id="settlement-details" class="space-y-4 text-sm">
                     <div class="bg-gray-50 p-3 rounded-lg text-xs text-gray-500">
                         <p>🏆 <b>最終結算 (含公款消費回補)</b>：</p>
-                        <p class="mt-1">每人應補回私人消費，並均分公款退款 (每人約 $726)。</p>
+                        <p class="mt-1">孝親旅費採比例分攤。每人先補回私人消費，再均分公款退款 (每人約 $726)。</p>
                     </div>
                     
                     <div class="space-y-2">
                         <div class="flex justify-between items-center bg-white p-3 rounded border border-gray-100 shadow-sm">
-                            <div>
+                            <div class="mr-2">
                                 <span class="font-bold text-gray-800 text-lg mr-2">榮</span>
-                                <span class="text-[10px] text-gray-400 block">原付$3737 + 私$1764 - 退$726</span>
+                                <span class="text-[10px] text-gray-400 block leading-tight mt-0.5">(90120×13.33% + 私1764 - 退726) - 已付8276</span>
                             </div>
-                            <div class="text-right">
+                            <div class="text-right shrink-0">
                                 <span class="text-rose-500 font-black text-lg">需支付 $4,775</span>
                             </div>
                         </div>
                         <div class="flex justify-between items-center bg-white p-3 rounded border border-gray-100 shadow-sm">
-                            <div>
+                            <div class="mr-2">
                                 <span class="font-bold text-gray-800 text-lg mr-2">如</span>
-                                <span class="text-[10px] text-gray-400 block">原付$9916 + 私$700 - 退$726</span>
+                                <span class="text-[10px] text-gray-400 block leading-tight mt-0.5">(90120×13.33% + 私700 - 退726) - 已付2097</span>
                             </div>
-                            <div class="text-right">
+                            <div class="text-right shrink-0">
                                 <span class="text-rose-500 font-black text-lg">需支付 $9,890</span>
                             </div>
                         </div>
                         <div class="flex justify-between items-center bg-white p-3 rounded border border-gray-100 shadow-sm">
-                            <div>
+                            <div class="mr-2">
                                 <span class="font-bold text-gray-800 text-lg mr-2">翔</span>
-                                <span class="text-[10px] text-gray-400 block">原收$22597 - 私$653 + 退$726</span>
+                                <span class="text-[10px] text-gray-400 block leading-tight mt-0.5">已付46632 - (90120×26.67% + 私653 - 退726)</span>
                             </div>
-                            <div class="text-right">
+                            <div class="text-right shrink-0">
                                 <span class="text-green-600 font-black text-lg">應拿回 $22,670</span>
                             </div>
                         </div>
                         <div class="flex justify-between items-center bg-white p-3 rounded border border-gray-100 shadow-sm">
-                            <div>
+                            <div class="mr-2">
                                 <span class="font-bold text-gray-800 text-lg mr-2">庭</span>
-                                <span class="text-[10px] text-gray-400 block">原付$14609 + 私$393 - 退$726</span>
+                                <span class="text-[10px] text-gray-400 block leading-tight mt-0.5">(90120×26.67% + 私393 - 退726) - 已付9426</span>
                             </div>
-                            <div class="text-right">
+                            <div class="text-right shrink-0">
                                 <span class="text-rose-500 font-black text-lg">需支付 $14,276</span>
                             </div>
                         </div>
                         <div class="flex justify-between items-center bg-white p-3 rounded border border-gray-100 shadow-sm">
-                            <div>
+                            <div class="mr-2">
                                 <span class="font-bold text-gray-800 text-lg mr-2">中</span>
-                                <span class="text-[10px] text-gray-400 block">原收$5665 - 私$121 + 退$726</span>
+                                <span class="text-[10px] text-gray-400 block leading-tight mt-0.5">已付23689 - (90120×20% + 私121 - 退726)</span>
                             </div>
-                            <div class="text-right">
+                            <div class="text-right shrink-0">
                                 <span class="text-green-600 font-black text-lg">應拿回 $6,270</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-6 pt-4 border-t border-gray-100">
-                        <p class="text-xs font-bold text-gray-400 mb-2">📄 公款消費明細參考(平均匯率1:771)</p>
+                        <p class="text-xs font-bold text-gray-400 mb-2">📄 公款消費明細參考</p>
                         <img src="公款消費明細.png" alt="公款消費明細" class="w-full rounded-lg shadow-sm border border-gray-100">
                     </div>
                 </div>
@@ -944,7 +944,7 @@
             const listDiv = document.getElementById('expense-list');
             const summaryCard = document.getElementById('expense-summary-card');
             const totalEl = document.getElementById('total-expense');
-            const splitListEl = document.getElementById('split-result-list'); // 注意：這裡我們已經用靜態HTML取代了動態生成，所以這個變數可能暫時用不到，除非你要保留動態功能。
+            const splitListEl = document.getElementById('split-result-list');
             
              if(GAS_URL.includes("你的_GOOGLE")) {
                 listDiv.innerHTML = `<div class="text-center text-red-400 p-4">請先設定 GAS_URL</div>`;
